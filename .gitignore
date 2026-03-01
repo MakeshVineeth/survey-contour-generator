@@ -1,0 +1,55 @@
+# =============================================================================
+# OS-generated files
+# =============================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# =============================================================================
+# Editor and IDE files
+# =============================================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# =============================================================================
+# App-generated output files
+# (exports produced by the Survey Contour Generator)
+# =============================================================================
+*.dxf
+*.lsp
+*.scr
+*.bmp
+
+# Exclude exported Excel and PNG files (generated outputs)
+# Note: the source HTML file is tracked; only exports are excluded
+exports/
+output/
+
+# =============================================================================
+# Node / npm (if a build system is ever added)
+# =============================================================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# =============================================================================
+# Miscellaneous
+# =============================================================================
+*.log
+*.tmp
+*.temp
+.env
+.env.*
