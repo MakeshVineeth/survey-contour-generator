@@ -20,9 +20,9 @@
       "urlHashed": true
     },
     {
-      "url": "assets/NOTICES.7934fda9",
-      "hash": "7934fda9",
-      "size": 1415246,
+      "url": "assets/NOTICES.4f8d366d",
+      "hash": "4f8d366d",
+      "size": 1416424,
       "urlHashed": true
     },
     {
@@ -237,7 +237,7 @@
     },
     {
       "url": "flutter_bootstrap.js",
-      "hash": "e4cc5da2",
+      "hash": "2c664aa0",
       "size": 14078,
       "urlHashed": false
     },
@@ -293,6 +293,12 @@
       "url": "manifest.json",
       "hash": "df202075",
       "size": 792,
+      "urlHashed": false
+    },
+    {
+      "url": "privacy.html",
+      "hash": "a961e1f8",
+      "size": 3572,
       "urlHashed": false
     },
     {
