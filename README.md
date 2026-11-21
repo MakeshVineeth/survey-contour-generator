@@ -4,6 +4,8 @@ A professional survey contour map generator for civil engineers and surveyors, a
 
 > **This application was generated using AI assistance.**
 
+**Try it now:** [makeshvineeth.github.io/survey-contour-generator](https://makeshvineeth.github.io/survey-contour-generator/) - runs in your browser, installs as an app and then works offline.
+
 ---
 
 ## Features
@@ -34,7 +36,7 @@ A professional survey contour map generator for civil engineers and surveyors, a
 | Platform | Distribution | Offline |
 |----------|--------------|---------|
 | Android (API 24+) | Signed APK / App Bundle | Yes, the app needs no network permission |
-| Web | Static hosting, installable PWA (Chrome, Edge and other modern browsers with WebAssembly support) | Yes, after the first online visit |
+| Web | [Hosted on GitHub Pages](https://makeshvineeth.github.io/survey-contour-generator/), installable PWA (Chrome, Edge and other modern browsers with WebAssembly support) | Yes, after the first online visit |
 | Windows 10/11 | Release build (zip) | Yes |
 
 ---
@@ -46,7 +48,7 @@ A professional survey contour map generator for civil engineers and surveyors, a
 2. Open **ContourGen**, tap **Import Excel** and pick your `.xlsx` file. No account or internet connection is needed.
 
 ### Web app (installable, works offline)
-1. Open the hosted URL once while online. The app downloads itself into the browser cache.
+1. Open [makeshvineeth.github.io/survey-contour-generator](https://makeshvineeth.github.io/survey-contour-generator/) once while online. The app downloads itself into the browser cache.
 2. Use the browser's **Install** option (install icon in the address bar, or *Add to Home screen* on mobile) to install it as an app.
 3. From then on it starts and works without a connection. When a new version is published, it is picked up on the next online visit.
 
@@ -126,6 +128,7 @@ flutter build apk --release
 flutter build appbundle --release --obfuscate --split-debug-info=build/app/outputs/symbols
 flutter build web --release --wasm --no-web-resources-cdn --web-content-hash
 flutter build windows --release
+tool/deploy_pages.sh        # build the web app and publish it to GitHub Pages (gh-pages branch)
 ```
 Release Android builds are signed from the git-ignored `android/key.properties`; there is no debug-signing fallback.
 See [AGENTS.md](AGENTS.md) for the project rules.

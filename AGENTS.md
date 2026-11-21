@@ -73,6 +73,7 @@ flutter build apk --release
 flutter build appbundle --release --obfuscate --split-debug-info=build/app/outputs/symbols
 flutter build web --release --wasm --no-web-resources-cdn --web-content-hash
 flutter build windows --release
+tool/deploy_pages.sh   # web build -> gh-pages (needs --base-href /<repo>/; the script handles it)
 ```
 Windows shell is Git Bash/PowerShell; Flutter beta 3.51 / Dart 3.15.
 
