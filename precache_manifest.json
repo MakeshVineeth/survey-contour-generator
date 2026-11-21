@@ -1,0 +1,311 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "url": "assets/AssetManifest.462d11b4.bin",
+      "hash": "462d11b4",
+      "size": 1600,
+      "urlHashed": true
+    },
+    {
+      "url": "assets/AssetManifest.bin.87cdcd43.json",
+      "hash": "87cdcd43",
+      "size": 2138,
+      "urlHashed": true
+    },
+    {
+      "url": "assets/FontManifest.69c2f06d.json",
+      "hash": "69c2f06d",
+      "size": 1406,
+      "urlHashed": true
+    },
+    {
+      "url": "assets/NOTICES.7934fda9",
+      "hash": "7934fda9",
+      "size": 1415246,
+      "urlHashed": true
+    },
+    {
+      "url": "assets/assets/fonts/jetbrains_mono/JetBrainsMono-Medium.31c92d01.ttf",
+      "hash": "31c92d01",
+      "size": 273860,
+      "urlHashed": true
+    },
+    {
+      "url": "assets/assets/fonts/jetbrains_mono/JetBrainsMono-Regular.a0bf60ef.ttf",
+      "hash": "a0bf60ef",
+      "size": 273900,
+      "urlHashed": true
+    },
+    {
+      "url": "assets/assets/fonts/jetbrains_mono/JetBrainsMono-SemiBold.1b3bfa1e.ttf",
+      "hash": "1b3bfa1e",
+      "size": 277092,
+      "urlHashed": true
+    },
+    {
+      "url": "assets/assets/fonts/noto_emoji/NotoColorEmoji-Subset.a2c7c6da.ttf",
+      "hash": "a2c7c6da",
+      "size": 33012,
+      "urlHashed": true
+    },
+    {
+      "url": "assets/assets/fonts/noto_emoji/NotoSansJP-Subset.e0fe4ddc.otf",
+      "hash": "e0fe4ddc",
+      "size": 1792,
+      "urlHashed": true
+    },
+    {
+      "url": "assets/assets/fonts/noto_emoji/NotoSansMath-Subset.c2c2c3b6.ttf",
+      "hash": "c2c2c3b6",
+      "size": 5992,
+      "urlHashed": true
+    },
+    {
+      "url": "assets/assets/fonts/noto_emoji/NotoSansSymbols-Subset.691b0243.ttf",
+      "hash": "691b0243",
+      "size": 2632,
+      "urlHashed": true
+    },
+    {
+      "url": "assets/assets/fonts/noto_emoji/NotoSansSymbols2-Subset.e136be9a.ttf",
+      "hash": "e136be9a",
+      "size": 3048,
+      "urlHashed": true
+    },
+    {
+      "url": "assets/assets/fonts/outfit/Outfit-Bold.f620b695.ttf",
+      "hash": "f620b695",
+      "size": 75992,
+      "urlHashed": true
+    },
+    {
+      "url": "assets/assets/fonts/outfit/Outfit-Light.181c6867.ttf",
+      "hash": "181c6867",
+      "size": 77644,
+      "urlHashed": true
+    },
+    {
+      "url": "assets/assets/fonts/outfit/Outfit-Medium.dc8d9212.ttf",
+      "hash": "dc8d9212",
+      "size": 74996,
+      "urlHashed": true
+    },
+    {
+      "url": "assets/assets/fonts/outfit/Outfit-Regular.3b64ac4f.ttf",
+      "hash": "3b64ac4f",
+      "size": 75132,
+      "urlHashed": true
+    },
+    {
+      "url": "assets/assets/fonts/outfit/Outfit-SemiBold.bf2e1d2a.ttf",
+      "hash": "bf2e1d2a",
+      "size": 76116,
+      "urlHashed": true
+    },
+    {
+      "url": "assets/fonts/MaterialIcons-Regular.5b4ec55f.otf",
+      "hash": "5b4ec55f",
+      "size": 1276,
+      "urlHashed": true
+    },
+    {
+      "url": "assets/fonts/fallback/Roboto-Regular.79e85140.ttf",
+      "hash": "79e85140",
+      "size": 171676,
+      "urlHashed": true
+    },
+    {
+      "url": "assets/packages/material_ui/shaders/ink_sparkle.2dca5ab9.frag",
+      "hash": "2dca5ab9",
+      "size": 8890,
+      "urlHashed": true
+    },
+    {
+      "url": "assets/shaders/ink_sparkle.2dca5ab9.frag",
+      "hash": "2dca5ab9",
+      "size": 8890,
+      "urlHashed": true
+    },
+    {
+      "url": "assets/shaders/stretch_effect.ab412f07.frag",
+      "hash": "ab412f07",
+      "size": 6737,
+      "urlHashed": true
+    },
+    {
+      "url": "boot.js",
+      "hash": "e8fd555b",
+      "size": 3089,
+      "urlHashed": false
+    },
+    {
+      "url": "canvaskit/canvaskit.js",
+      "hash": "56a1d5af",
+      "size": 87201,
+      "urlHashed": false
+    },
+    {
+      "url": "canvaskit/canvaskit.wasm",
+      "hash": "e469486a",
+      "size": 7332908,
+      "urlHashed": false
+    },
+    {
+      "url": "canvaskit/chromium/canvaskit.js",
+      "hash": "8a1ee1ec",
+      "size": 86440,
+      "urlHashed": false
+    },
+    {
+      "url": "canvaskit/chromium/canvaskit.wasm",
+      "hash": "ceb1ad5e",
+      "size": 5488264,
+      "urlHashed": false
+    },
+    {
+      "url": "canvaskit/skwasm.js",
+      "hash": "898d6461",
+      "size": 64328,
+      "urlHashed": false
+    },
+    {
+      "url": "canvaskit/skwasm.wasm",
+      "hash": "9c520d5d",
+      "size": 3635569,
+      "urlHashed": false
+    },
+    {
+      "url": "canvaskit/skwasm_heavy.js",
+      "hash": "71d5e747",
+      "size": 64441,
+      "urlHashed": false
+    },
+    {
+      "url": "canvaskit/skwasm_heavy.wasm",
+      "hash": "1cc9518e",
+      "size": 5247034,
+      "urlHashed": false
+    },
+    {
+      "url": "canvaskit/webparagraph/canvaskit.js",
+      "hash": "8c80b58c",
+      "size": 76114,
+      "urlHashed": false
+    },
+    {
+      "url": "canvaskit/webparagraph/canvaskit.wasm",
+      "hash": "a2a5ff89",
+      "size": 3764835,
+      "urlHashed": false
+    },
+    {
+      "url": "canvaskit/wimp.js",
+      "hash": "65b4ce32",
+      "size": 60172,
+      "urlHashed": false
+    },
+    {
+      "url": "canvaskit/wimp.wasm",
+      "hash": "41790f4d",
+      "size": 3377055,
+      "urlHashed": false
+    },
+    {
+      "url": "canvaskit/wimp_heavy.js",
+      "hash": "da28c703",
+      "size": 60285,
+      "urlHashed": false
+    },
+    {
+      "url": "canvaskit/wimp_heavy.wasm",
+      "hash": "f8d30d03",
+      "size": 4771842,
+      "urlHashed": false
+    },
+    {
+      "url": "favicon.png",
+      "hash": "f91ba98e",
+      "size": 2283,
+      "urlHashed": false
+    },
+    {
+      "url": "flutter.js",
+      "hash": "c20cebf3",
+      "size": 11873,
+      "urlHashed": false
+    },
+    {
+      "url": "flutter_bootstrap.js",
+      "hash": "e4cc5da2",
+      "size": 14078,
+      "urlHashed": false
+    },
+    {
+      "url": "icons/Icon-192.png",
+      "hash": "fe1023a8",
+      "size": 7111,
+      "urlHashed": false
+    },
+    {
+      "url": "icons/Icon-512.png",
+      "hash": "021da322",
+      "size": 23502,
+      "urlHashed": false
+    },
+    {
+      "url": "icons/Icon-maskable-192.png",
+      "hash": "13736c2d",
+      "size": 4776,
+      "urlHashed": false
+    },
+    {
+      "url": "icons/Icon-maskable-512.png",
+      "hash": "387e7cfb",
+      "size": 17732,
+      "urlHashed": false
+    },
+    {
+      "url": "index.html",
+      "hash": "68e52c7d",
+      "size": 3598,
+      "urlHashed": false
+    },
+    {
+      "url": "main.dart.44549f28.js",
+      "hash": "44549f28",
+      "size": 3433335,
+      "urlHashed": true
+    },
+    {
+      "url": "main.dart.55a3be22.wasm",
+      "hash": "55a3be22",
+      "size": 2841531,
+      "urlHashed": true
+    },
+    {
+      "url": "main.dart.a04d4703.mjs",
+      "hash": "a04d4703",
+      "size": 32305,
+      "urlHashed": true
+    },
+    {
+      "url": "manifest.json",
+      "hash": "df202075",
+      "size": 792,
+      "urlHashed": false
+    },
+    {
+      "url": "sw.js",
+      "hash": "68708bfb",
+      "size": 7831,
+      "urlHashed": false
+    },
+    {
+      "url": "version.json",
+      "hash": "7517c5b0",
+      "size": 122,
+      "urlHashed": false
+    }
+  ]
+}
