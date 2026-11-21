@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 460" width="900" height="460" font-family="Segoe UI, Arial, sans-serif">
+  <title>C4 Deployment - Survey Contour Generator</title>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#cbd5e1"/>
+    </marker>
+  </defs>
+  <rect width="900" height="460" rx="10" fill="#111827"/>
+  <text x="24" y="34" font-size="18" font-weight="bold" fill="#f1f5f9">C4 Deployment</text>
+  <text x="24" y="54" font-size="12" fill="#94a3b8">Distribution channels and where the app runs</text>
+
+  <!-- row 1 Android -->
+  <rect x="30" y="80" width="200" height="90" rx="10" fill="#475569" stroke="#94a3b8"/>
+  <text x="130" y="116" font-size="14" font-weight="bold" fill="#f8fafc" text-anchor="middle">Google Play Store</text>
+  <text x="130" y="138" font-size="12" fill="#e2e8f0" text-anchor="middle">signed .aab</text>
+  <rect x="330" y="70" width="540" height="110" rx="10" fill="#1e293b" stroke="#64748b"/>
+  <text x="346" y="92" font-size="12" fill="#94a3b8">Android device</text>
+  <rect x="400" y="104" width="400" height="60" rx="8" fill="#1d4ed8" stroke="#93c5fd"/>
+  <text x="600" y="130" font-size="14" font-weight="bold" fill="#fff" text-anchor="middle">Android app</text>
+  <text x="600" y="150" font-size="11" fill="#e0e7ff" text-anchor="middle">local files only, no network permission</text>
+  <line x1="230" y1="125" x2="328" y2="125" stroke="#cbd5e1" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="279" y="115" font-size="11" fill="#e2e8f0" text-anchor="middle">install</text>
+
+  <!-- row 2 Web -->
+  <rect x="30" y="200" width="200" height="90" rx="10" fill="#475569" stroke="#94a3b8"/>
+  <text x="130" y="232" font-size="14" font-weight="bold" fill="#f8fafc" text-anchor="middle">Static hosting</text>
+  <text x="130" y="252" font-size="12" fill="#e2e8f0" text-anchor="middle">GitHub Pages</text>
+  <text x="130" y="270" font-size="11" fill="#e2e8f0" text-anchor="middle">build/web (HTTPS)</text>
+  <rect x="330" y="190" width="540" height="110" rx="10" fill="#1e293b" stroke="#64748b"/>
+  <text x="346" y="212" font-size="12" fill="#94a3b8">Browser (any device)</text>
+  <rect x="360" y="224" width="220" height="60" rx="8" fill="#0f766e" stroke="#5eead4"/>
+  <text x="470" y="250" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Cache Storage</text>
+  <text x="470" y="268" font-size="11" fill="#ccfbf1" text-anchor="middle">service worker precache</text>
+  <rect x="610" y="224" width="240" height="60" rx="8" fill="#1d4ed8" stroke="#93c5fd"/>
+  <text x="730" y="250" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Web PWA (Wasm)</text>
+  <text x="730" y="268" font-size="11" fill="#e0e7ff" text-anchor="middle">installable, offline after first load</text>
+  <line x1="230" y1="245" x2="328" y2="245" stroke="#cbd5e1" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="279" y="235" font-size="11" fill="#e2e8f0" text-anchor="middle">first visit</text>
+  <line x1="610" y1="254" x2="582" y2="254" stroke="#cbd5e1" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- row 3 Windows -->
+  <rect x="30" y="320" width="200" height="90" rx="10" fill="#475569" stroke="#94a3b8"/>
+  <text x="130" y="352" font-size="14" font-weight="bold" fill="#f8fafc" text-anchor="middle">Release artifact</text>
+  <text x="130" y="372" font-size="12" fill="#e2e8f0" text-anchor="middle">Windows zip / MSIX</text>
+  <text x="130" y="390" font-size="11" fill="#e2e8f0" text-anchor="middle">(build/windows/...)</text>
+  <rect x="330" y="310" width="540" height="110" rx="10" fill="#1e293b" stroke="#64748b"/>
+  <text x="346" y="332" font-size="12" fill="#94a3b8">Windows laptop</text>
+  <rect x="400" y="344" width="400" height="60" rx="8" fill="#1d4ed8" stroke="#93c5fd"/>
+  <text x="600" y="370" font-size="14" font-weight="bold" fill="#fff" text-anchor="middle">Windows app</text>
+  <text x="600" y="390" font-size="11" fill="#e0e7ff" text-anchor="middle">unzip and run, or install the package</text>
+  <line x1="230" y1="365" x2="328" y2="365" stroke="#cbd5e1" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="279" y="355" font-size="11" fill="#e2e8f0" text-anchor="middle">copy / install</text>
+</svg>

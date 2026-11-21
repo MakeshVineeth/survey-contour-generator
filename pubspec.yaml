@@ -1,0 +1,64 @@
+name: survey_contour_generator
+description: "Survey Contour Generator - TIN-based contour maps for surveyors and civil engineers."
+publish_to: 'none'
+version: 13.0.0+1300
+
+environment:
+  sdk: ^3.15.0-118.1.beta
+
+dependencies:
+  excel: ^4.0.6
+  file_picker: ^13.4.0
+  flutter:
+    sdk: flutter
+  material_ui: ^1.1.0
+  pdf: ^3.12.0
+  printing: ^5.14.3
+  provider: ^6.1.5+1
+  web: ^1.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  fonts:
+    - family: Outfit
+      fonts:
+        - asset: assets/fonts/outfit/Outfit-Light.ttf
+          weight: 300
+        - asset: assets/fonts/outfit/Outfit-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/outfit/Outfit-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/outfit/Outfit-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/outfit/Outfit-Bold.ttf
+          weight: 700
+    - family: JetBrainsMono
+      fonts:
+        - asset: assets/fonts/jetbrains_mono/JetBrainsMono-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/jetbrains_mono/JetBrainsMono-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/jetbrains_mono/JetBrainsMono-SemiBold.ttf
+          weight: 600
+    # Offline glyph fallbacks (SIL OFL, subset to the emoji/symbols used in the UI).
+    - family: NotoColorEmoji
+      fonts:
+        - asset: assets/fonts/noto_emoji/NotoColorEmoji-Subset.ttf
+    - family: NotoSansSymbols2
+      fonts:
+        - asset: assets/fonts/noto_emoji/NotoSansSymbols2-Subset.ttf
+    - family: NotoSansSymbols
+      fonts:
+        - asset: assets/fonts/noto_emoji/NotoSansSymbols-Subset.ttf
+    - family: NotoSansMath
+      fonts:
+        - asset: assets/fonts/noto_emoji/NotoSansMath-Subset.ttf
+    - family: NotoSansJP
+      fonts:
+        - asset: assets/fonts/noto_emoji/NotoSansJP-Subset.otf

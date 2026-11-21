@@ -53,3 +53,34 @@ yarn.lock
 *.temp
 .env
 .env.*
+
+# =============================================================================
+# Flutter / Dart
+# =============================================================================
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
+*.iml
+.metadata
+coverage/
+*.symbols
+app.*.map.json
+
+# =============================================================================
+# Android signing and local config (never commit)
+# =============================================================================
+*.jks
+*.keystore
+*.p12
+*.key
+key.properties
+local.properties
+device_*.png
+
+# Large reference build (libraries inlined); kept locally only
+contour-generator-offline-*.html
+.claude/

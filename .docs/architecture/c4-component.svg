@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" width="900" height="520" font-family="Segoe UI, Arial, sans-serif">
+  <title>C4 Level 3 - Components of the Flutter app</title>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#cbd5e1"/>
+    </marker>
+  </defs>
+  <rect width="900" height="520" rx="10" fill="#111827"/>
+  <text x="24" y="34" font-size="18" font-weight="bold" fill="#f1f5f9">C4 Level 3 - Components</text>
+  <text x="24" y="54" font-size="12" fill="#94a3b8">Dependencies point downwards; the domain depends on nothing.</text>
+
+  <!-- presentation -->
+  <rect x="30" y="70" width="840" height="140" rx="10" fill="#1e293b" stroke="#64748b"/>
+  <text x="46" y="92" font-size="13" font-weight="bold" fill="#93c5fd">Presentation (lib/src/features/contour/presentation)</text>
+  <rect x="50" y="108" width="240" height="84" rx="8" fill="#1d4ed8" stroke="#93c5fd"/>
+  <text x="170" y="132" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Widgets / screens / dialogs</text>
+  <text x="170" y="152" font-size="11" fill="#e0e7ff" text-anchor="middle">HomeScreen, tabs, map overlays</text>
+  <text x="170" y="170" font-size="11" fill="#e0e7ff" text-anchor="middle">select / Consumer</text>
+  <rect x="330" y="108" width="240" height="84" rx="8" fill="#1d4ed8" stroke="#93c5fd"/>
+  <text x="450" y="132" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Controllers (ChangeNotifier)</text>
+  <text x="450" y="152" font-size="11" fill="#e0e7ff" text-anchor="middle">Contour, DisplaySettings,</text>
+  <text x="450" y="170" font-size="11" fill="#e0e7ff" text-anchor="middle">Draw, MapView</text>
+  <rect x="610" y="108" width="240" height="84" rx="8" fill="#1d4ed8" stroke="#93c5fd"/>
+  <text x="730" y="132" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Painters (CustomPainter)</text>
+  <text x="730" y="152" font-size="11" fill="#e0e7ff" text-anchor="middle">Map, TIN visualizer,</text>
+  <text x="730" y="170" font-size="11" fill="#e0e7ff" text-anchor="middle">slope/elevation charts</text>
+  <line x1="290" y1="150" x2="328" y2="150" stroke="#cbd5e1" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="610" y1="150" x2="572" y2="150" stroke="#cbd5e1" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- domain -->
+  <rect x="30" y="250" width="840" height="110" rx="10" fill="#1e293b" stroke="#64748b"/>
+  <text x="46" y="272" font-size="13" font-weight="bold" fill="#86efac">Domain (pure Dart, parity-tested against the JS reference)</text>
+  <rect x="50" y="286" width="240" height="60" rx="8" fill="#15803d" stroke="#86efac"/>
+  <text x="170" y="311" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Entities</text>
+  <text x="170" y="330" font-size="11" fill="#dcfce7" text-anchor="middle">Terrain, Contour, Triangle, SurveyImport</text>
+  <rect x="330" y="286" width="240" height="60" rx="8" fill="#15803d" stroke="#86efac"/>
+  <text x="450" y="311" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Algorithms</text>
+  <text x="450" y="330" font-size="11" fill="#dcfce7" text-anchor="middle">Delaunay, ContourGenerator, Analyzer</text>
+  <rect x="610" y="286" width="240" height="60" rx="8" fill="#15803d" stroke="#86efac"/>
+  <text x="730" y="311" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Parsers / exporters</text>
+  <text x="730" y="330" font-size="11" fill="#dcfce7" text-anchor="middle">RowParser, DXF, AutoLISP, SCR, cad_text</text>
+
+  <!-- data / platform -->
+  <rect x="30" y="400" width="840" height="100" rx="10" fill="#1e293b" stroke="#64748b"/>
+  <text x="46" y="422" font-size="13" font-weight="bold" fill="#fcd34d">Data and platform (ports and adapters)</text>
+  <rect x="50" y="434" width="240" height="54" rx="8" fill="#b45309" stroke="#fcd34d"/>
+  <text x="170" y="458" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">Spreadsheet codec (.xlsx)</text>
+  <text x="170" y="476" font-size="11" fill="#fef3c7" text-anchor="middle">data/xlsx_spreadsheet_codec</text>
+  <rect x="330" y="434" width="240" height="54" rx="8" fill="#b45309" stroke="#fcd34d"/>
+  <text x="450" y="458" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">Ports: file, print, picker</text>
+  <text x="450" y="476" font-size="11" fill="#fef3c7" text-anchor="middle">io / web adapters (conditional import)</text>
+  <rect x="610" y="434" width="240" height="54" rx="8" fill="#b45309" stroke="#fcd34d"/>
+  <text x="730" y="458" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">ComputeRunner</text>
+  <text x="730" y="476" font-size="11" fill="#fef3c7" text-anchor="middle">isolate (native) / inline (web)</text>
+
+  <line x1="450" y1="212" x2="450" y2="248" stroke="#cbd5e1" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="450" y1="362" x2="450" y2="398" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arr)"/>
+  <text x="460" y="236" font-size="11" fill="#e2e8f0">calls services</text>
+  <text x="460" y="384" font-size="11" fill="#e2e8f0">implemented by adapters (injected into controllers)</text>
+</svg>
