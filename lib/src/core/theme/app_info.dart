@@ -1,6 +1,8 @@
 /// Static application information shown in the header and the help dialog.
+///
+/// Keep [version] in sync with `version:` in pubspec.yaml (a test enforces it).
 abstract final class AppInfo {
   static const String name = 'Survey Contour Generator';
-  static const String version = '12.4';
-  static const String buildDate = '2026-01-26';
+  static const String version = '13.0.0';
+  static const String buildDate = '2026-11-21';
 }

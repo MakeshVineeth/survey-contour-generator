@@ -230,7 +230,8 @@ class ChartContainer extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
+                  // Keep long titles clear of the corner "↗" expand button.
+                  padding: const EdgeInsets.only(bottom: 8, right: 32),
                   child: Text(
                     title,
                     style: VizStyle.sans(

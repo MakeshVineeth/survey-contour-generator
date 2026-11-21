@@ -103,6 +103,8 @@ final class TinEdge {
   final double length;
 }
 
+typedef _Fit = ({double minX, double minY, double scale, double ox, double oy});
+
 /// Canvas-space geometry of the visualizer for a given size.
 final class TinVisualData {
   TinVisualData({
@@ -127,7 +129,7 @@ final class TinVisualData {
     edgeCount: edges.length,
   );
 
-  static ({double minX, double minY, double scale}) _fit(
+  static _Fit _fit(
     List<SurveyPoint> points,
     Size size,
     bool expanded,
@@ -143,27 +145,30 @@ final class TinVisualData {
       minY = math.min(minY, p.y);
       maxY = math.max(maxY, p.y);
     }
-    if (!minX.isFinite) return (minX: 0, minY: 0, scale: 1);
+    if (!minX.isFinite) return (minX: 0, minY: 0, scale: 1, ox: 0, oy: 0);
     final rx = maxX - minX == 0 ? 1.0 : maxX - minX;
     final ry = maxY - minY == 0 ? 1.0 : maxY - minY;
     final scale = math.min(
       (size.width - 2 * padding) / rx,
       (size.height - 2 * padding) / ry,
     );
-    return (minX: minX, minY: minY, scale: scale);
+    // Centre the mesh in the canvas on the axis that has spare room.
+    final ox = (size.width - 2 * padding - rx * scale) / 2;
+    final oy = (size.height - 2 * padding - ry * scale) / 2;
+    return (minX: minX, minY: minY, scale: scale, ox: ox, oy: oy);
   }
 
   static Offset _to(
     double x,
     double y,
-    ({double minX, double minY, double scale}) f,
+    _Fit f,
     Size size,
     bool expanded,
   ) {
     final padding = expanded ? 40.0 : 30.0;
     return Offset(
-      padding + (x - f.minX) * f.scale,
-      size.height - (padding + (y - f.minY) * f.scale),
+      padding + f.ox + (x - f.minX) * f.scale,
+      size.height - (padding + f.oy + (y - f.minY) * f.scale),
     );
   }
 

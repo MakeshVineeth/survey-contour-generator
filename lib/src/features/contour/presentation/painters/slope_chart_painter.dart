@@ -112,20 +112,7 @@ class SlopeChartPainter extends CustomPainter {
     final hover = hoverIndex == i;
     final grow = hover && expanded ? 5.0 : 0.0;
     final outer = l.outer + grow;
-    final path = Path()
-      ..arcTo(
-        Rect.fromCircle(center: l.center, radius: outer),
-        s.start,
-        s.sweep,
-        true,
-      )
-      ..arcTo(
-        Rect.fromCircle(center: l.center, radius: l.inner),
-        s.start + s.sweep,
-        -s.sweep,
-        false,
-      )
-      ..close();
+    final path = _ring(l.center, outer, l.inner, s.start, s.sweep);
     if (hover) _paintHalo(canvas, l, i, outer);
     final fill = Paint();
     if (expanded) {
@@ -148,23 +135,34 @@ class SlopeChartPainter extends CustomPainter {
       );
   }
 
+  /// Annular sector between [inner] and [outer]. A slice covering the whole
+  /// circle (a single class at 100%) cannot be built from arcs - a 360 degree
+  /// sweep collapses to nothing - so it is drawn as a ring instead.
+  static Path _ring(
+    Offset center,
+    double outer,
+    double inner,
+    double start,
+    double sweep,
+  ) {
+    final outerRect = Rect.fromCircle(center: center, radius: outer);
+    final innerRect = Rect.fromCircle(center: center, radius: inner);
+    if (sweep >= 2 * math.pi - 1e-6) {
+      return Path()
+        ..fillType = PathFillType.evenOdd
+        ..addOval(outerRect)
+        ..addOval(innerRect);
+    }
+    return Path()
+      ..arcTo(outerRect, start, sweep, true)
+      ..arcTo(innerRect, start + sweep, -sweep, false)
+      ..close();
+  }
+
   void _paintHalo(Canvas canvas, SlopeChartLayout l, int i, double outer) {
     final halo = expanded ? 12.0 : 8.0;
     final s = l.slices[i];
-    final path = Path()
-      ..arcTo(
-        Rect.fromCircle(center: l.center, radius: outer + halo),
-        s.start,
-        s.sweep,
-        true,
-      )
-      ..arcTo(
-        Rect.fromCircle(center: l.center, radius: outer),
-        s.start + s.sweep,
-        -s.sweep,
-        false,
-      )
-      ..close();
+    final path = _ring(l.center, outer + halo, outer, s.start, s.sweep);
     canvas.drawPath(
       path,
       Paint()..color = Color(l.bins[i].color).withValues(alpha: 0.25),

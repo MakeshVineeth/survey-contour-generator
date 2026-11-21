@@ -188,7 +188,8 @@ class _Header extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(bottom: 14),
+          // Keep the badge clear of the corner "↗" expand button.
+          padding: const EdgeInsets.only(bottom: 14, right: 36),
           child: Row(
             children: [
               Flexible(
