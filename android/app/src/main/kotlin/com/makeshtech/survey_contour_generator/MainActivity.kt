@@ -1,4 +1,4 @@
-package app.surveycontour.survey_contour_generator
+package com.makeshtech.survey_contour_generator
 
 import android.os.Bundle
 import androidx.core.view.WindowCompat
