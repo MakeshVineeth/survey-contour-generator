@@ -27,6 +27,8 @@
   // Otherwise: the <flutter-view> host appears, then wait two frames to paint.
   function afterPaint() {
     requestAnimationFrame(function () { requestAnimationFrame(markReady); });
+    // Animation frames are paused in background tabs; never leave the splash up.
+    setTimeout(markReady, 700);
   }
   if (document.querySelector('flutter-view')) {
     afterPaint();

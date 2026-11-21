@@ -7,6 +7,7 @@ import '../../../../core/utils/js_number.dart';
 import '../../domain/entities/contour.dart';
 import '../../domain/entities/geometry.dart';
 import '../../domain/entities/triangle.dart';
+import 'contour_label_anchor.dart';
 import 'viz_style.dart';
 
 /// A major-contour label anchored at a position relative to the origin.
@@ -57,7 +58,7 @@ final class MapGeometry {
   }) {
     final origin = _origin(points);
     final tin = _buildTin(triangles, origin);
-    final contourPaths = _buildContours(contours, origin);
+    final contourPaths = _buildContours(contours, origin, points);
     return MapGeometry._(
       points: points,
       breakLines: breakLines,
@@ -190,7 +191,12 @@ final class MapGeometry {
   }
 
   static ({Path minor, Path major, List<ContourLabelSpec> labels})
-  _buildContours(List<Contour> contours, Offset origin) {
+  _buildContours(
+    List<Contour> contours,
+    Offset origin,
+    List<SurveyPoint> survey,
+  ) {
+    final clearance = ContourLabelAnchor.clearanceFor(survey);
     final minor = Path();
     final major = Path();
     final labels = <ContourLabelSpec>[];
@@ -202,7 +208,11 @@ final class MapGeometry {
         path.lineTo(c.points[i].x - origin.dx, c.points[i].y - origin.dy);
       }
       if (c.isMajor && c.points.length >= 2) {
-        final mid = c.points[c.points.length ~/ 2];
+        final mid = c.points[ContourLabelAnchor.indexFor(
+          c.points,
+          survey,
+          clearance,
+        )];
         labels.add(
           ContourLabelSpec(
             Offset(mid.x - origin.dx, mid.y - origin.dy),

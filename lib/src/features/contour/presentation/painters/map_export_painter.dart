@@ -7,6 +7,7 @@ import '../../../../core/utils/js_number.dart';
 import '../../domain/entities/contour.dart';
 import '../../domain/entities/geometry.dart';
 import '../../domain/entities/triangle.dart';
+import 'contour_label_anchor.dart';
 import 'map_painter.dart';
 import 'viz_style.dart';
 
@@ -164,12 +165,14 @@ abstract final class MapExportPainter {
     const major = Color(0xFFFF4757);
     final minorPaint = _stroke(const Color(0xFF00FF88), 1.5);
     final majorPaint = _stroke(major, 3);
+    final clearance = ContourLabelAnchor.clearanceFor(data.points);
     for (final c in data.contours) {
       if (c.points.isEmpty) continue;
       final pts = [for (final p in c.points) fit.at(p.x, p.y)];
       canvas.drawPath(fit.polyline(pts), c.isMajor ? majorPaint : minorPaint);
       if (data.layers.labels && c.isMajor && pts.length >= 2) {
-        _imageContourLabel(canvas, pts[pts.length ~/ 2], c.level);
+        final at = ContourLabelAnchor.indexFor(c.points, data.points, clearance);
+        _imageContourLabel(canvas, pts[at], c.level);
       }
     }
   }
@@ -220,6 +223,7 @@ abstract final class MapExportPainter {
   static void _printContours(Canvas canvas, _ExportFit fit, MapExportData d) {
     final minorPaint = _stroke(const Color(0xFF008800), 1);
     final majorPaint = _stroke(const Color(0xFFCC0000), 2);
+    final clearance = ContourLabelAnchor.clearanceFor(d.points);
     for (final c in d.contours) {
       final pts = [for (final p in c.points) fit.at(p.x, p.y)];
       canvas.drawPath(fit.polyline(pts), c.isMajor ? majorPaint : minorPaint);
@@ -228,7 +232,7 @@ abstract final class MapExportPainter {
           canvas,
           c.level.toFixed(1),
           VizStyle.sans(14, _black, weight: FontWeight.w700),
-          pts[pts.length ~/ 2],
+          pts[ContourLabelAnchor.indexFor(c.points, d.points, clearance)],
         );
       }
     }
