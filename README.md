@@ -165,4 +165,4 @@ See also [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
-This project is provided as-is for engineering and surveying use. No warranty is expressed or implied.
+This project is open source under the [MIT License](LICENSE). It is provided as-is for engineering and surveying use; no warranty is expressed or implied.
