@@ -45,3 +45,23 @@ flutter test tool/store_assets/capture_screenshots_test.dart             # phone
 Sources: `tool/store_assets/generate_graphics.ps1` and `tool/store_assets/capture_screenshots_test.dart`
 (the test lives in `tool/`, so the normal `flutter test` never runs it). Verify with the PNG IHDR bytes
 (width/height at offset 16, colour type at byte 25: 2 = RGB, 6 = RGBA).
+
+## Large-screen set (foldable, desktop/Chromebook, 16:10 tablet, phone landscape)
+
+Produced with the **release APK** (`build/app/outputs/flutter-apk/app-release.apk`) running on Android 14 (API 34,
+google_apis_playstore, x86_64) emulators created at the exact Play-required resolution (no device frame, no scaling),
+sample data loaded with the in-app "Sample" button, demo-mode status bar (10:00, full battery/Wi-Fi). Real device
+screenshots (`adb screencap`), converted to 24-bit RGB (IHDR colour type 2); all well under 8 MB. The temporary AVDs
+were deleted afterwards. These are emulator captures of the unmodified app, not Flutter test renders.
+
+| File | Pixels | Ratio | Play Console slot | Density |
+|---|---|---|---|---|
+| `foldable/foldable-inner-1x1-01-map.png`, `-02-analysis.png` | 2106 x 2106 | 1:1 | Foldable, unfolded inner screen | 420 dpi |
+| `foldable/foldable-inner-4x3-01-map.png`, `-02-data.png` | 2688 x 2016 | 4:3 | Foldable, unfolded inner screen | 420 dpi |
+| `foldable/foldable-outer-10x16-01-map.png`, `-02-analysis.png` | 1260 x 2016 | 10:16 | Foldable, folded outer (cover) screen | 420 dpi |
+| `desktop/desktop-01-map.png`, `-02-data.png`, `-03-analysis.png`, `-04-export.png` | 1920 x 1080 | 16:9 | Desktop / Chromebook | 320 dpi |
+| `tablet-landscape/tablet-landscape-01-map.png`, `-02-data.png`, `-03-analysis.png`, `-04-export.png` | 2560 x 1600 | 16:10 | 7-inch and 10-inch tablet (landscape) | 420 dpi |
+| `phone-landscape/phone-landscape-01-map.png`, `-02-analysis.png` | 1920 x 1080 | 16:9 | Phone, landscape (optional) | 420 dpi |
+
+Layout notes: >= 768 dp wide windows (all but the 10:16 cover screen and the phone-landscape set) show sidebar + map;
+the 10:16 and phone-landscape shots use the drawer layout (the Analysis shots show the drawer open).
