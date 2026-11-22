@@ -78,7 +78,7 @@ tool/deploy_pages.sh   # web build -> gh-pages (needs --base-href /<repo>/; the 
 Windows shell is Git Bash/PowerShell; Flutter beta 3.51 / Dart 3.15.
 
 ## Security / release rules
-- Android: compile/target SDK 36, minSdk 24, `allowBackup=false`, network security config with no
+- Android: compile/target SDK 37 (Android 17), minSdk 24, `allowBackup=false`, network security config with no
   cleartext, edge-to-edge, release signed only from git-ignored `android/key.properties`
   (never debug-signed). Strip plugin-injected permissions (e.g. INTERNET) in the release manifest.
 - Never commit secrets, keystores, `local.properties`, machine paths, device screenshots or logs.

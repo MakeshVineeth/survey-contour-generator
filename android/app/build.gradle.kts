@@ -17,7 +17,7 @@ if (hasReleaseKey) {
 
 android {
     namespace = "com.makeshtech.survey_contour_generator"
-    compileSdk = 36
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -28,7 +28,7 @@ android {
     defaultConfig {
         applicationId = "com.makeshtech.survey_contour_generator"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 37
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
