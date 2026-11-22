@@ -9,7 +9,7 @@ INTERNET), and Flutter templates fall back to debug signing for release builds.
 ## Decision
 - The release manifest removes plugin-injected permissions, including `INTERNET`.
 - `android:allowBackup="false"`; a network security config disallows cleartext traffic.
-- compileSdk/targetSdk 36, minSdk 24, edge-to-edge UI.
+- compileSdk/targetSdk 37 (Android 17), minSdk 24, edge-to-edge UI.
 - Release signing reads only the git-ignored `android/key.properties`; there is no debug-signing fallback,
   so a release build without the key fails instead of producing a debug-signed artifact.
 - The app bundle is built with `--obfuscate --split-debug-info=...`.

@@ -1,6 +1,6 @@
 # Privacy Policy - Survey Contour Generator
 
-_Last updated: 21 November 2026_
+_Developer: MakeshTech - Last updated: 22 November 2026_
 
 Survey Contour Generator ("the app") is a tool that turns survey point data into contour maps. This policy explains what the app does with your data. The short version: **it does not collect, store or share any personal data.**
 
@@ -35,4 +35,4 @@ If this policy changes, the new version will be published at this address with a
 
 ## Contact
 
-Questions or requests: open an issue at https://github.com/MakeshVineeth/survey-contour-generator/issues
+Developer: MakeshTech. Questions or requests about this policy or your data: email makeshvineeth1997@gmail.com or open an issue at https://github.com/MakeshVineeth/survey-contour-generator/issues

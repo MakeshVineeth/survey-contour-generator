@@ -103,7 +103,7 @@ Do not mention Autodesk products as if endorsed; the description already carries
 
 1. **Countries / regions**: select where to publish (start with all, or a short list).
 2. Confirm the app is free, contains no ads, and accepts the content guidelines and US export laws.
-3. Devices: leave defaults. The app supports phones and tablets (min Android 7.0, API 24; target API 36).
+3. Devices: leave defaults. The app supports phones and tablets (min Android 7.0, API 24; target API 37).
 
 ---
 
@@ -114,7 +114,7 @@ Requirements Google checks, all met by the current build:
 | Requirement | Status |
 |---|---|
 | Android App Bundle (`.aab`) | yes |
-| Target API level (new apps must target Android 16 / API 36 from 31 Aug 2026, [Google](https://support.google.com/googleplay/android-developer/answer/11926878)) | targets 36 |
+| Target API level (new apps must target Android 16 / API 36 from 31 Aug 2026, [Google](https://support.google.com/googleplay/android-developer/answer/11926878)) | targets 37 (also meets the Aug 2027 API 37 requirement early) |
 | 64-bit native code | arm64-v8a and x86_64 included |
 | 16 KB page-size support (native libraries must be 16 KB aligned for Android 15+ targets) | verified: all `.so` LOAD segments aligned to 16 KB or 64 KB |
 | Increasing `versionCode` for every upload | `pubspec.yaml`: `13.0.0+1300`; bump the `+` number each release |

@@ -6,10 +6,10 @@ Everything below is ready to paste into Play Console. Character limits are Googl
 
 | Field | Limit | Draft |
 |---|---|---|
-| **App name** | 30 | `Survey Contour Generator` (24) |
-| Alternatives | 30 | `ContourGen: Survey Contours` (27) |
-| **Short description** | 80 | `Turn survey points into TIN contour maps and export to AutoCAD. Works offline.` (78) |
-| Alternatives | 80 | `Survey contour maps from Excel data. DXF, AutoLISP & Civil 3D export. Offline.` (78) |
+| **App name** | 30 | `ContourGen: Survey Contour Map` (30) - entered in Play Console; keeps the in-app brand "ContourGen" and adds the keywords "survey contour map" |
+| Alternatives | 30 | `Survey Contour Generator` (24), `ContourGen: Survey Contours` (27) |
+| **Short description** | 80 | `Survey contour map maker: Excel to TIN, slope analysis, DXF and AutoLISP export` (79) |
+| Alternatives | 80 | `Contour map maker for surveyors: Excel to TIN, slope, DXF and AutoCAD export` (76) |
 | **Default language** | | English (United States) - en-US |
 | **App or game** | | App |
 | **Free or paid** | | Free (a free app can never be switched to paid later) |
@@ -22,35 +22,60 @@ Everything below is ready to paste into Play Console. Character limits are Googl
 
 Naming rules to respect: no emoji or ALL CAPS, no "best / #1 / free / new", no price or ranking claims, no keyword stuffing, and nothing that implies endorsement by Autodesk.
 
-## Full description (limit 4000, this draft is about 1900)
+## Full description (limit 4000; this SEO-optimised draft is 2,040)
+
+Written for Play search: the first 167 characters are what shows before "Read more", so the main keywords sit there; every important term appears naturally two or three times; no keyword lists, no repeated phrases, no competitor names.
 
 ```
-Survey Contour Generator turns your survey points into clear contour maps on your phone, tablet or laptop. Import an Excel sheet, set the contour interval, and get a TIN-based map you can inspect, analyse and export to AutoCAD.
+Survey Contour Generator is a contour map maker for land surveyors, civil engineers and site engineers. Import survey points from Excel, build a TIN surface and get clean contour lines with elevation labels, then export to AutoCAD, Civil 3D or any CAD software. It works fully offline.
 
-KEY FEATURES
-• TIN contouring - Delaunay triangulation with optional smoothing for clean contour lines
-• Excel import - load X, Y and RL (elevation) from .xlsx files; common column names are recognised automatically
-• Breaklines - import or draw breaklines so the surface follows ridges and valleys
-• Interactive map - pan, zoom and pinch; show or hide points, labels, TIN and contours
-• Terrain analysis - elevation range, slope distribution, survey area and a plain-language summary
-• TIN visualizer - watch the triangulation being built step by step
-• Export - DXF (R12), AutoLISP script, Civil 3D script, PNG and BMP images (3000 x 3000), Excel, and print
+WHAT YOU CAN DO
+• Generate a contour map from X, Y and RL (elevation) survey data in seconds
+• Build a TIN (triangulated irregular network) with Delaunay triangulation
+• Set the contour interval and major contour lines, with optional smoothing
+• Add breaklines to follow ridges, valleys and edges of the ground surface
+• Zoom, pan and pinch on an interactive topographic map; toggle points, labels, TIN and contours
+• See terrain analysis: elevation range, average and maximum slope, slope distribution and survey area, with a plain-language summary
+• Watch the triangulation being built with the TIN visualizer
 
-WORKS OFFLINE, PRIVATE BY DESIGN
-Everything is calculated on your device. The app has no internet access, no account, no ads and no tracking. Your survey data never leaves your device.
+EXPORT TO CAD AND REPORTS
+• DXF (R12) with contours, breaklines and survey points on separate layers
+• AutoLISP (.lsp) and Civil 3D script (.scr) for direct import
+• High-resolution PNG and BMP images (3000 x 3000), Excel export and print
 
-BUILT FOR SURVEYORS AND ENGINEERS
-Use it for site surveys, topographic plans, grading studies and quick checks in the field. Export to AutoCAD, Civil 3D or any CAD software that reads DXF.
+IMPORT SURVEY DATA FROM EXCEL
+Open an .xlsx file with columns X (Easting), Y (Northing), RL (Z, Elevation) and a point name (BH, ID, Name). Add a LineName column to define breaklines. A built-in sample data set lets you try everything first.
 
-INPUT FORMAT
-An Excel (.xlsx) file with columns X (or Easting), Y (or Northing), RL (or Z, Elevation) and a point name (BH, ID, Name, Point). Add a LineName column to define breaklines. Tip: the app includes a sample data set so you can try it first.
+PRIVATE AND OFFLINE
+All calculations run on your device. No account, no ads, no tracking, and the app needs no internet access, so your survey data never leaves your phone or tablet.
 
-ALSO ON THE WEB AND WINDOWS
-The same app runs in your browser and can be installed to work offline: makeshvineeth.github.io/survey-contour-generator
+BUILT FOR
+Topographic surveys, site plans, grading and earthwork checks, borehole and spot-level plans, and quick field verification of ground levels.
+
+ALSO ON THE WEB
+The same app runs in your browser and installs to work offline: makeshvineeth.github.io/survey-contour-generator
 Open source (MIT): github.com/MakeshVineeth/survey-contour-generator
 
 AutoCAD and Civil 3D are trademarks of Autodesk, Inc. This app is not affiliated with or endorsed by Autodesk.
 ```
+
+## Search keyword plan (ASO)
+
+Play has no keyword field: ranking comes from the title, short and full description, the app's category and tags, installs, ratings and retention. Target these phrases, in this order of priority:
+
+| Priority | Phrase | Where it appears |
+|---|---|---|
+| 1 | contour map, contour lines | title ("Contour"), short, first paragraph, features |
+| 1 | survey, land surveying, surveyor | title, short, first paragraph, "Built for" |
+| 2 | TIN, Delaunay triangulation | short, features |
+| 2 | DXF, AutoCAD, Civil 3D, AutoLISP | short, export section |
+| 2 | topographic map, elevation, slope analysis | features |
+| 3 | Excel (xlsx), civil engineer, site plan, grading, earthwork | import, built-for |
+| 3 | offline | first paragraph, private section |
+
+Rules that keep it policy-safe: never repeat a phrase more than 4-5 times, no lists of unrelated keywords, no emoji or symbols as decoration in the title/short description, no claims like "best", "#1", "free", and use the Autodesk names only as plain descriptive text with the disclaimer.
+
+Other ranking levers to set in Console: category **Tools** (or Productivity), up to 5 **tags**, a clear feature graphic and first screenshot (the captions in `phone-captioned/` contain "Contour maps", "Excel", "Export to AutoCAD"), and replying to every review. Ratings matter most after launch: ask satisfied users to rate it.
 
 ## Release notes
 
