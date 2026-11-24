@@ -27,10 +27,12 @@ final class ContourGenerator {
 
     var minZ = double.infinity, maxZ = double.negativeInfinity;
     for (final t in triangles) {
-      for (final z in [t.p1.z, t.p2.z, t.p3.z]) {
-        minZ = math.min(minZ, z);
-        maxZ = math.max(maxZ, z);
-      }
+      minZ = math.min(minZ, t.p1.z);
+      maxZ = math.max(maxZ, t.p1.z);
+      minZ = math.min(minZ, t.p2.z);
+      maxZ = math.max(maxZ, t.p2.z);
+      minZ = math.min(minZ, t.p3.z);
+      maxZ = math.max(maxZ, t.p3.z);
     }
     final startLevel = (minZ / interval).ceilToDouble() * interval;
     final endLevel = (maxZ / interval).floorToDouble() * interval;
@@ -38,7 +40,7 @@ final class ContourGenerator {
     final contours = <Contour>[];
     for (var level = startLevel; level <= endLevel; level += interval) {
       final segments = _levelSegments(triangles, level);
-      if (segments.isEmpty) continue;
+      if (segments.length == 0) continue;
       final isMajor = _isMajor(level, interval, majorEvery);
       for (final chain in _buildChains(segments)) {
         final points = smoothness > 0 ? smooth(chain, smoothness) : chain;
@@ -53,70 +55,78 @@ final class ContourGenerator {
     return jsRound(level / interval).remainder(majorEvery).abs() == 0;
   }
 
-  static List<List<Point2>> _levelSegments(List<Triangle> triangles, double level) {
-    final segments = <List<Point2>>[];
+  /// Segments of one level as parallel start/end lists (edge order of the
+  /// first two crossings of each triangle).
+  static _Segments _levelSegments(List<Triangle> triangles, double level) {
+    final starts = <Point2>[];
+    final ends = <Point2>[];
     for (final tri in triangles) {
-      final pts = [tri.p1, tri.p2, tri.p3];
-      final crossings = <Point2>[];
+      final a = tri.p1, b = tri.p2, c = tri.p3;
+      Point2? first, second;
+      var count = 0;
       for (var i = 0; i < 3; i++) {
-        final p1 = pts[i], p2 = pts[(i + 1) % 3];
+        final p1 = i == 0 ? a : (i == 1 ? b : c);
+        final p2 = i == 0 ? b : (i == 1 ? c : a);
         final crosses = (p1.z < level && p2.z >= level) ||
             (p2.z < level && p1.z >= level);
-        if (crosses) {
-          final t = (level - p1.z) / (p2.z - p1.z);
-          crossings.add(Point2(p1.x + t * (p2.x - p1.x), p1.y + t * (p2.y - p1.y)));
+        if (!crosses) continue;
+        final t = (level - p1.z) / (p2.z - p1.z);
+        final crossing =
+            Point2(p1.x + t * (p2.x - p1.x), p1.y + t * (p2.y - p1.y));
+        if (count == 0) {
+          first = crossing;
+        } else if (count == 1) {
+          second = crossing;
         }
+        count++;
       }
-      if (crossings.length == 2) segments.add(crossings);
+      if (count == 2) {
+        starts.add(first!);
+        ends.add(second!);
+      }
     }
-    return segments;
+    return _Segments(starts, ends);
   }
 
   /// Joins loose segments into polylines (open or closed).
-  static List<List<Point2>> _buildChains(List<List<Point2>> segments) {
+  ///
+  /// Behaves exactly like scanning all unused segments in index order for the
+  /// first one whose end point is within [_joinTolerance] of the chain's last
+  /// or first point; the scan is replaced by a spatial hash lookup that yields
+  /// the smallest matching index.
+  static List<List<Point2>> _buildChains(_Segments segments) {
     final chains = <List<Point2>>[];
-    final used = List<bool>.filled(segments.length, false);
+    final count = segments.length;
+    final used = List<bool>.filled(count, false);
+    final grid = _EndpointGrid(segments);
 
-    for (var i = 0; i < segments.length; i++) {
+    for (var i = 0; i < count; i++) {
       if (used[i]) continue;
-      final chain = [...segments[i]];
       used[i] = true;
+      // `front` holds the points inserted before the chain start, reversed.
+      final front = <Point2>[];
+      final back = <Point2>[segments.starts[i], segments.ends[i]];
 
-      var extended = true;
-      while (extended) {
-        extended = _extendChain(chain, segments, used);
+      while (true) {
+        final last = back.last;
+        final first = front.isEmpty ? back.first : front.last;
+        final j = grid.firstMatch(first, last, used);
+        if (j < 0) break;
+        used[j] = true;
+        final s = segments.starts[j], e = segments.ends[j];
+        if (_near(last, s)) {
+          back.add(e);
+        } else if (_near(last, e)) {
+          back.add(s);
+        } else if (_near(first, s)) {
+          front.add(e);
+        } else {
+          front.add(s);
+        }
       }
-      if (chain.length >= 2) chains.add(chain);
+      chains.add([...front.reversed, ...back]);
     }
     return chains;
-  }
-
-  /// Attaches the first unused matching segment; returns whether one was found.
-  static bool _extendChain(
-    List<Point2> chain,
-    List<List<Point2>> segments,
-    List<bool> used,
-  ) {
-    final last = chain.last;
-    final first = chain.first;
-    for (var j = 0; j < segments.length; j++) {
-      if (used[j]) continue;
-      final seg = segments[j];
-      if (_near(last, seg[0])) {
-        chain.add(seg[1]);
-      } else if (_near(last, seg[1])) {
-        chain.add(seg[0]);
-      } else if (_near(first, seg[0])) {
-        chain.insert(0, seg[1]);
-      } else if (_near(first, seg[1])) {
-        chain.insert(0, seg[0]);
-      } else {
-        continue;
-      }
-      used[j] = true;
-      return true;
-    }
-    return false;
   }
 
   static bool _near(Point2 a, Point2 b) =>
@@ -160,5 +170,95 @@ final class ContourGenerator {
             (-p0 + p2) * t +
             (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 +
             (-p0 + 3 * p1 - 3 * p2 + p3) * t3);
+  }
+}
+
+/// Level segments as parallel start/end point lists.
+final class _Segments {
+  _Segments(this.starts, this.ends);
+
+  final List<Point2> starts;
+  final List<Point2> ends;
+
+  int get length => starts.length;
+}
+
+/// Spatial hash over segment end points.
+///
+/// Cells are twice the join tolerance wide, so two points closer than the
+/// tolerance always fall into the same or adjacent cells (3x3 neighbourhood).
+/// Candidates are re-checked with the exact distance test, so a hash collision
+/// or an over-wide neighbourhood can only add work, never change the result.
+final class _EndpointGrid {
+  _EndpointGrid(this._segments) {
+    for (var j = 0; j < _segments.length; j++) {
+      _insert(_segments.starts[j], j);
+      _insert(_segments.ends[j], j);
+    }
+  }
+
+  static const double _cellSize = 2 * ContourGenerator._joinTolerance;
+
+  /// Beyond this many cells from the origin coordinates are "far" and kept in
+  /// one shared list (avoids int overflow / precision issues).
+  static const double _farCells = 1e15;
+
+  final _Segments _segments;
+  final Map<int, List<int>> _cells = {};
+  final List<int> _far = [];
+
+  /// Cell index of [v], or null when it is too large to hash safely.
+  static int? _cell(double v) {
+    final q = v / _cellSize;
+    return q.abs() > _farCells ? null : q.floor();
+  }
+
+  static int _key(int cx, int cy) => cx * 1000003 + cy;
+
+  void _insert(Point2 p, int segment) {
+    if (!p.x.isFinite || !p.y.isFinite) return; // never "near" anything
+    final cx = _cell(p.x), cy = _cell(p.y);
+    if (cx == null || cy == null) {
+      if (_far.isEmpty || _far.last != segment) _far.add(segment);
+      return;
+    }
+    final list = _cells.putIfAbsent(_key(cx, cy), () => <int>[]);
+    if (list.isEmpty || list.last != segment) list.add(segment);
+  }
+
+  /// Smallest unused segment index with an end point near [first] or [last],
+  /// or -1.
+  int firstMatch(Point2 first, Point2 last, List<bool> used) {
+    var best = _segments.length;
+    best = _scan(last, used, best);
+    if (!identical(first, last)) best = _scan(first, used, best);
+    return best == _segments.length ? -1 : best;
+  }
+
+  int _scan(Point2 q, List<bool> used, int best) {
+    if (!q.x.isFinite || !q.y.isFinite) return best;
+    best = _scanList(_far, q, used, best);
+    final cx = _cell(q.x), cy = _cell(q.y);
+    if (cx == null || cy == null) return best;
+    for (var dx = -1; dx <= 1; dx++) {
+      for (var dy = -1; dy <= 1; dy++) {
+        final list = _cells[_key(cx + dx, cy + dy)];
+        if (list != null) best = _scanList(list, q, used, best);
+      }
+    }
+    return best;
+  }
+
+  /// [list] is in ascending segment order, so the scan stops at [best].
+  int _scanList(List<int> list, Point2 q, List<bool> used, int best) {
+    for (final j in list) {
+      if (j >= best) break;
+      if (used[j]) continue;
+      if (ContourGenerator._near(q, _segments.starts[j]) ||
+          ContourGenerator._near(q, _segments.ends[j])) {
+        return j;
+      }
+    }
+    return best;
   }
 }
