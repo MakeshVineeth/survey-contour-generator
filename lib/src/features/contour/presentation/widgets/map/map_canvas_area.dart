@@ -172,45 +172,59 @@ class _MapSurfaceState extends State<_MapSurface> {
     MouseCursor cursor,
   ) {
     final gestures = _gestures!;
+    // Only the map layer listens for pointers. The overlays are siblings above
+    // it and absorb their own taps; otherwise pressing the "Click to add points"
+    // pill, the legend or the coordinates box would also drop a breakline point
+    // on the map underneath.
     return ClipRect(
-      child: Listener(
-        behavior: HitTestBehavior.opaque,
-        onPointerDown: gestures.onDown,
-        onPointerMove: gestures.onMove,
-        onPointerHover: gestures.onHover,
-        onPointerUp: gestures.onUp,
-        onPointerCancel: gestures.onUp,
-        onPointerSignal: gestures.onSignal,
-        child: MouseRegion(
-          cursor: cursor,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              _MapCanvas(
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Listener(
+            behavior: HitTestBehavior.opaque,
+            onPointerDown: gestures.onDown,
+            onPointerMove: gestures.onMove,
+            onPointerHover: gestures.onHover,
+            onPointerUp: gestures.onUp,
+            onPointerCancel: gestures.onUp,
+            onPointerSignal: gestures.onSignal,
+            child: MouseRegion(
+              cursor: cursor,
+              child: _MapCanvas(
                 view: view,
                 geometry: geometry,
                 layers: layers,
                 drawMode: drawMode,
                 draw: draw,
               ),
-              if (drawMode)
-                Positioned(
-                  top: 16,
-                  left: 16,
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxWidth: size.width > 32 ? size.width - 32 : 0,
-                    ),
-                    child: const DrawModeIndicator(),
-                  ),
-                ),
-              if (hasData)
-                const Positioned(top: 16, right: 16, child: CoordsDisplay()),
-              if (hasData)
-                const Positioned(bottom: 16, right: 16, child: MapLegend()),
-            ],
+            ),
           ),
-        ),
+          if (drawMode)
+            Positioned(
+              top: 16,
+              left: 16,
+              child: AbsorbPointer(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: size.width > 32 ? size.width - 32 : 0,
+                  ),
+                  child: const DrawModeIndicator(),
+                ),
+              ),
+            ),
+          if (hasData)
+            const Positioned(
+              top: 16,
+              right: 16,
+              child: AbsorbPointer(child: CoordsDisplay()),
+            ),
+          if (hasData)
+            const Positioned(
+              bottom: 16,
+              right: 16,
+              child: AbsorbPointer(child: MapLegend()),
+            ),
+        ],
       ),
     );
   }
