@@ -21,10 +21,24 @@ class ElevationChart extends StatefulWidget {
 
 class _ElevationChartState extends State<ElevationChart> {
   int? _hover;
+  ElevationChartLayout? _layout;
+
+  /// Layout for the current samples/style/size, rebuilt only when one changes
+  /// (hover events arrive at pointer rate; the layout is O(samples)).
+  ElevationChartLayout _layoutFor(Size size) {
+    final cached = _layout;
+    if (cached != null &&
+        cached.size == size &&
+        identical(cached.samples, widget.samples) &&
+        cached.style == widget.style) {
+      return cached;
+    }
+    return _layout = ElevationChartLayout(size, widget.samples, widget.style);
+  }
 
   void _update(Offset local, Size size) {
     if (widget.samples.isEmpty) return;
-    final layout = ElevationChartLayout(size, widget.samples, widget.style);
+    final layout = _layoutFor(size);
     final inside = layout.plot.inflate(8).contains(local);
     final next = inside ? layout.indexAt(local.dx) : null;
     if (next != _hover) setState(() => _hover = next);
@@ -52,6 +66,7 @@ class _ElevationChartState extends State<ElevationChart> {
                   samples: widget.samples,
                   style: widget.style,
                   hoverIndex: _hover,
+                  layout: widget.samples.isEmpty ? null : _layoutFor(size),
                 ),
               ),
             ),

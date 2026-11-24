@@ -8,7 +8,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:survey_contour_generator/src/features/contour/domain/entities/geometry.dart';
 import 'package:survey_contour_generator/src/features/contour/domain/entities/triangle.dart';
 import 'package:survey_contour_generator/src/features/contour/domain/services/contour_model_builder.dart';
+import 'package:survey_contour_generator/src/features/contour/presentation/painters/chart_data.dart';
 import 'package:survey_contour_generator/src/features/contour/presentation/painters/contour_label_anchor.dart';
+import 'package:survey_contour_generator/src/features/contour/presentation/painters/elevation_chart_painter.dart';
 import 'package:survey_contour_generator/src/features/contour/presentation/painters/map_geometry.dart';
 import 'package:survey_contour_generator/src/features/contour/presentation/painters/tin_visualizer_painter.dart';
 
@@ -100,6 +102,49 @@ void main() {
     });
   });
 
+  group('ElevationChartPainter with a cached layout paints identically', () {
+    final r = math.Random(21);
+    final samples = [
+      for (var i = 0; i < 300; i++)
+        ElevationSample('P$i', 90 + i * 0.05 + r.nextDouble()),
+    ];
+    for (final style in [
+      ElevationChartStyle.compact,
+      ElevationChartStyle.large,
+    ]) {
+      for (final hover in const [null, 0, 150, 299]) {
+        final name = style.expanded ? 'large' : 'compact';
+        testWidgets('$name hover $hover', (tester) async {
+          final size = Size(style.expanded ? 900 : 320, style.height);
+          final layout = ElevationChartLayout(size, samples, style);
+          final plain = await _renderSized(
+            tester,
+            ElevationChartPainter(
+              samples: samples,
+              style: style,
+              hoverIndex: hover,
+            ),
+            size,
+          );
+          // Reusing the same layout object twice must not change anything.
+          for (var i = 0; i < 2; i++) {
+            final cached = await _renderSized(
+              tester,
+              ElevationChartPainter(
+                samples: samples,
+                style: style,
+                hoverIndex: hover,
+                layout: layout,
+              ),
+              size,
+            );
+            expect(cached, plain);
+          }
+        });
+      }
+    }
+  });
+
   group('TinVisualizerPainter pixels are unchanged', () {
     final r = math.Random(5);
     final points = [
@@ -150,12 +195,22 @@ void main() {
   });
 }
 
-Future<List<int>> _render(WidgetTester tester, CustomPainter painter) async {
+Future<List<int>> _render(WidgetTester tester, CustomPainter painter) =>
+    _renderSized(tester, painter, const Size(320, 280));
+
+Future<List<int>> _renderSized(
+  WidgetTester tester,
+  CustomPainter painter,
+  Size size,
+) async {
   return (await tester.runAsync(() async {
     final recorder = ui.PictureRecorder();
-    painter.paint(Canvas(recorder), const Size(320, 280));
+    painter.paint(Canvas(recorder), size);
     final picture = recorder.endRecording();
-    final image = await picture.toImage(320, 280);
+    final image = await picture.toImage(
+      size.width.toInt(),
+      size.height.toInt(),
+    );
     final bytes = await image.toByteData();
     image.dispose();
     picture.dispose();

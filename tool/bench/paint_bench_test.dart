@@ -77,6 +77,7 @@ void main() {
         for (final scaleMul in const [1.0, 8.0]) {
           // First paint creates lazily cached labels; time it separately.
           sw = Stopwatch()..start();
+          final rssBefore = _rss();
           _record((c) => MapPainter(
                 geometry: geometry,
                 centerX: cx,
@@ -87,6 +88,7 @@ void main() {
                 currentBreakline: const [],
               ).paint(c, const Size(1000, 700)));
           final first = _ms(sw);
+          final firstRss = (_rss() - rssBefore) / 1048576;
           final warm = _best(5, () {
             _record((c) => MapPainter(
                   geometry: geometry,
@@ -98,7 +100,7 @@ void main() {
                   currentBreakline: const [],
                 ).paint(c, const Size(1000, 700)));
           });
-          out.writeln('  MapPainter labels=$labels x$scaleMul   first ${first.toStringAsFixed(1)} ms'
+          out.writeln('  MapPainter labels=$labels x$scaleMul   first ${first.toStringAsFixed(1)} ms (rss +${firstRss.toStringAsFixed(0)} MB)'
               '  warm ${warm.toStringAsFixed(1)} ms');
         }
       }

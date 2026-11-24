@@ -140,23 +140,29 @@ class _MapSurfaceState extends State<_MapSurface> {
       (d) => d.drawMode && d.mobileDrawMode == MobileDrawMode.add,
     );
 
+    // The coordinates box changes size on (almost) every pointer move, which
+    // re-lays out this LayoutBuilder and marks it for repaint. Without a
+    // boundary here that repaint climbs to the route and re-records the
+    // header, toolbar and sidebar on every mouse move.
     return ColoredBox(
       color: AppColors.bgPrimary,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final size = constraints.biggest;
-          _syncViewport(size);
-          return _buildSurface(
-            geometry,
-            layers,
-            drawMode,
-            hasData,
-            size,
-            view,
-            draw,
-            grab ? SystemMouseCursors.grab : _addCursor(adding),
-          );
-        },
+      child: RepaintBoundary(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final size = constraints.biggest;
+            _syncViewport(size);
+            return _buildSurface(
+              geometry,
+              layers,
+              drawMode,
+              hasData,
+              size,
+              view,
+              draw,
+              grab ? SystemMouseCursors.grab : _addCursor(adding),
+            );
+          },
+        ),
       ),
     );
   }

@@ -105,6 +105,8 @@ final class MapGeometry {
 
   final List<TextPainter?> _bhLabels;
   final List<TextPainter?> _rlLabels;
+  final Map<String, TextPainter> _bhByText = {};
+  final Map<String, TextPainter> _rlByText = {};
 
   bool matches(
     List<SurveyPoint> p,
@@ -118,24 +120,50 @@ final class MapGeometry {
       identical(c, contours);
 
   /// Borehole label (bold 10px mono, cyan).
-  TextPainter boreholeLabel(int i) => _bhLabels[i] ??= VizStyle.label(
-    points[i].borehole,
-    VizStyle.mono(10, AppColors.accentCyan, weight: FontWeight.w700, height: 1),
-  );
+  TextPainter boreholeLabel(int i) {
+    final cached = _bhLabels[i];
+    if (cached != null) return cached;
+    final text = points[i].borehole;
+    return _bhLabels[i] = _bhByText.putIfAbsent(
+      text,
+      () => VizStyle.label(
+        text,
+        VizStyle.mono(
+          10,
+          AppColors.accentCyan,
+          weight: FontWeight.w700,
+          height: 1,
+        ),
+      ),
+    );
+  }
 
-  /// Reduced-level label (9px mono, green).
-  TextPainter levelLabel(int i) => _rlLabels[i] ??= VizStyle.label(
-    'RL ${points[i].z.toFixed(2)}',
-    VizStyle.mono(9, AppColors.accentGreen, height: 1),
-  );
+  /// Reduced-level label (9px mono, green). Identical texts share one
+  /// laid-out painter (same text and style paint identically); many points
+  /// share the same rounded level.
+  TextPainter levelLabel(int i) {
+    final cached = _rlLabels[i];
+    if (cached != null) return cached;
+    final text = 'RL ${points[i].z.toFixed(2)}';
+    return _rlLabels[i] = _rlByText.putIfAbsent(
+      text,
+      () => VizStyle.label(
+        text,
+        VizStyle.mono(9, AppColors.accentGreen, height: 1),
+      ),
+    );
+  }
 
   void dispose() {
-    for (final tp in _bhLabels) {
-      tp?.dispose();
+    // Labels may be shared between points: dispose each painter once.
+    for (final tp in _bhByText.values) {
+      tp.dispose();
     }
-    for (final tp in _rlLabels) {
-      tp?.dispose();
+    _bhByText.clear();
+    for (final tp in _rlByText.values) {
+      tp.dispose();
     }
+    _rlByText.clear();
     for (final l in contourLabels) {
       l.dispose();
     }
