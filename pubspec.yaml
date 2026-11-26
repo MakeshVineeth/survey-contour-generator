@@ -1,7 +1,7 @@
 name: survey_contour_generator
 description: "Survey Contour Generator - TIN-based contour maps for surveyors and civil engineers."
 publish_to: 'none'
-version: 13.0.0+1302
+version: 13.0.0+1303
 
 environment:
   sdk: ^3.15.0-118.1.beta

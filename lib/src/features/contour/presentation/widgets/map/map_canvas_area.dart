@@ -209,20 +209,20 @@ class _MapSurfaceState extends State<_MapSurface> {
             Positioned(
               top: 16,
               left: 16,
-              child: AbsorbPointer(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: size.width > 32 ? size.width - 32 : 0,
-                  ),
-                  child: const DrawModeIndicator(),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: size.width > 32 ? size.width - 32 : 0,
                 ),
+                child: const DrawModeIndicator(),
               ),
             ),
           if (hasData)
-            const Positioned(
-              top: 16,
+            Positioned(
+              // On a phone the draw pill spans the width; sit below it rather
+              // than underneath it so the pill stays tappable.
+              top: drawMode && size.width < 600 ? 68 : 16,
               right: 16,
-              child: AbsorbPointer(child: CoordsDisplay()),
+              child: const AbsorbPointer(child: CoordsDisplay()),
             ),
           if (hasData)
             const Positioned(
