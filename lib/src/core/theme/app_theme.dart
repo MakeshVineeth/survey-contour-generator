@@ -15,7 +15,11 @@ abstract final class AppTheme {
     systemNavigationBarContrastEnforced: false,
   );
 
-  static ThemeData get dark {
+  /// Built once and shared by `theme` / `darkTheme` (avoids rebuilding the
+  /// full Material text theme more than once at startup).
+  static final ThemeData dark = _buildDark();
+
+  static ThemeData _buildDark() {
     final base = ThemeData(
       brightness: Brightness.dark,
       useMaterial3: true,
