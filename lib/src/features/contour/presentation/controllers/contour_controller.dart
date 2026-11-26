@@ -94,6 +94,10 @@ class ContourController extends ChangeNotifier {
        _fitDelay = fitDelay,
        _codec = codec;
 
+  /// `Utf8Encoder.convert` returns a `Uint8List` (unlike `utf8.encode`'s
+  /// `List<int>` type), so exports need no extra copy.
+  static const Utf8Encoder _utf8 = Utf8Encoder();
+
   static const double minInterval = 0.1;
   static const double maxInterval = 10000;
   static const int minMajorEvery = 1;
@@ -312,15 +316,16 @@ class ContourController extends ChangeNotifier {
     fileName: 'contour-${_dateStamp()}-R12.dxf',
     mimeType: 'application/dxf',
     successToast: '✓ DXF R12 exported (max compatibility)',
-    build: () =>
-        utf8.encode(DxfExporter.build(_model.contours, _breakLines, _points)),
+    build: () => _utf8.convert(
+      DxfExporter.build(_model.contours, _breakLines, _points),
+    ),
   );
 
   Future<bool> exportAutoLisp() => _guarded(
     fileName: 'contour-${_dateStamp()}.lsp',
     mimeType: 'text/plain',
     successToast: '✓ AutoLISP exported',
-    build: () => utf8.encode(
+    build: () => _utf8.convert(
       AutoLispExporter.build(
         _model.contours,
         _breakLines,
@@ -334,7 +339,7 @@ class ContourController extends ChangeNotifier {
     fileName: 'contour-${_dateStamp()}.scr',
     mimeType: 'text/plain',
     successToast: '✓ Civil 3D script exported',
-    build: () => utf8.encode(
+    build: () => _utf8.convert(
       Civil3dScriptExporter.build(_model.contours, _breakLines, _points),
     ),
   );
@@ -391,7 +396,7 @@ class ContourController extends ChangeNotifier {
     required String fileName,
     required String mimeType,
     required String successToast,
-    required List<int> Function() build,
+    required Uint8List Function() build,
     bool requirePoints = true,
   }) async {
     if (requirePoints && _points.isEmpty) {
@@ -401,7 +406,8 @@ class ContourController extends ChangeNotifier {
     try {
       final saved = await _files.saveFile(
         fileName: fileName,
-        bytes: Uint8List.fromList(build()),
+        // Already a fresh Uint8List: no defensive copy (exports reach 15 MB+).
+        bytes: build(),
         mimeType: mimeType,
       );
       if (saved) showToast(successToast);

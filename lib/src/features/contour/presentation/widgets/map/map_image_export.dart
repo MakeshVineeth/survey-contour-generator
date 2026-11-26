@@ -32,17 +32,20 @@ abstract final class MapImageExport {
       (canvas) =>
           MapExportPainter.paintImage(canvas, exportSize.toDouble(), data),
     );
+    final ByteData? bytes;
     try {
-      final bytes = await image.toByteData();
-      if (bytes == null) throw StateError('Could not read image pixels');
-      return BmpEncoder.encodeRgba(
-        bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes),
-        exportSize,
-        exportSize,
-      );
+      bytes = await image.toByteData();
     } finally {
+      // Free the 36 MB raster before the 27 MB BMP is allocated: the pixel
+      // copy below is all the encoder needs.
       image.dispose();
     }
+    if (bytes == null) throw StateError('Could not read image pixels');
+    return BmpEncoder.encodeRgba(
+      bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes),
+      exportSize,
+      exportSize,
+    );
   }
 
   /// 2000x2000 PNG with title block used for printing (`handlePrint`).

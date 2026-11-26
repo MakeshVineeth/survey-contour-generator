@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:typed_data';
 
 import 'package:flutter/painting.dart';
 
@@ -104,6 +105,8 @@ final class MapGeometry {
 
   final List<TextPainter?> _bhLabels;
   final List<TextPainter?> _rlLabels;
+  final Map<String, TextPainter> _bhByText = {};
+  final Map<String, TextPainter> _rlByText = {};
 
   bool matches(
     List<SurveyPoint> p,
@@ -117,24 +120,50 @@ final class MapGeometry {
       identical(c, contours);
 
   /// Borehole label (bold 10px mono, cyan).
-  TextPainter boreholeLabel(int i) => _bhLabels[i] ??= VizStyle.label(
-    points[i].borehole,
-    VizStyle.mono(10, AppColors.accentCyan, weight: FontWeight.w700, height: 1),
-  );
+  TextPainter boreholeLabel(int i) {
+    final cached = _bhLabels[i];
+    if (cached != null) return cached;
+    final text = points[i].borehole;
+    return _bhLabels[i] = _bhByText.putIfAbsent(
+      text,
+      () => VizStyle.label(
+        text,
+        VizStyle.mono(
+          10,
+          AppColors.accentCyan,
+          weight: FontWeight.w700,
+          height: 1,
+        ),
+      ),
+    );
+  }
 
-  /// Reduced-level label (9px mono, green).
-  TextPainter levelLabel(int i) => _rlLabels[i] ??= VizStyle.label(
-    'RL ${points[i].z.toFixed(2)}',
-    VizStyle.mono(9, AppColors.accentGreen, height: 1),
-  );
+  /// Reduced-level label (9px mono, green). Identical texts share one
+  /// laid-out painter (same text and style paint identically); many points
+  /// share the same rounded level.
+  TextPainter levelLabel(int i) {
+    final cached = _rlLabels[i];
+    if (cached != null) return cached;
+    final text = 'RL ${points[i].z.toFixed(2)}';
+    return _rlLabels[i] = _rlByText.putIfAbsent(
+      text,
+      () => VizStyle.label(
+        text,
+        VizStyle.mono(9, AppColors.accentGreen, height: 1),
+      ),
+    );
+  }
 
   void dispose() {
-    for (final tp in _bhLabels) {
-      tp?.dispose();
+    // Labels may be shared between points: dispose each painter once.
+    for (final tp in _bhByText.values) {
+      tp.dispose();
     }
-    for (final tp in _rlLabels) {
-      tp?.dispose();
+    _bhByText.clear();
+    for (final tp in _rlByText.values) {
+      tp.dispose();
     }
+    _rlByText.clear();
     for (final l in contourLabels) {
       l.dispose();
     }
@@ -161,33 +190,61 @@ final class MapGeometry {
   ) {
     final index = Map<SurveyPoint, int>.identity();
     int idOf(SurveyPoint p) => index.putIfAbsent(p, () => index.length);
+    // Vertex ids per triangle corner (creation order of the ids matters only
+    // for being unique, the path order follows the triangle order).
+    final ids = Int32List(triangles.length * 3);
     final counts = <int, int>{};
-    final edges = <(int, int, SurveyPoint, SurveyPoint)>[];
+    var o = 0;
     for (final t in triangles) {
-      final ids = [idOf(t.p1), idOf(t.p2), idOf(t.p3)];
-      final pts = [t.p1, t.p2, t.p3];
-      for (var k = 0; k < 3; k++) {
-        final a = ids[k];
-        final b = ids[(k + 1) % 3];
-        final key = a < b ? a * 0x100000000 + b : b * 0x100000000 + a;
-        counts[key] = (counts[key] ?? 0) + 1;
-        edges.add((a, b, pts[k], pts[(k + 1) % 3]));
-      }
+      final a = idOf(t.p1), b = idOf(t.p2), c = idOf(t.p3);
+      ids[o] = a;
+      ids[o + 1] = b;
+      ids[o + 2] = c;
+      o += 3;
+      _countEdge(counts, a, b);
+      _countEdge(counts, b, c);
+      _countEdge(counts, c, a);
     }
     final shared = Path();
     final hull = Path();
-    final seen = <int>{};
-    for (final e in edges) {
-      final key = e.$1 < e.$2
-          ? e.$1 * 0x100000000 + e.$2
-          : e.$2 * 0x100000000 + e.$1;
-      if (!seen.add(key)) continue;
-      final target = (counts[key] ?? 1) > 1 ? shared : hull;
-      target
-        ..moveTo(e.$3.x - origin.dx, e.$3.y - origin.dy)
-        ..lineTo(e.$4.x - origin.dx, e.$4.y - origin.dy);
+    o = 0;
+    for (final t in triangles) {
+      final a = ids[o], b = ids[o + 1], c = ids[o + 2];
+      o += 3;
+      _emitEdge(counts, a, b, t.p1, t.p2, origin, shared, hull);
+      _emitEdge(counts, b, c, t.p2, t.p3, origin, shared, hull);
+      _emitEdge(counts, c, a, t.p3, t.p1, origin, shared, hull);
     }
     return (shared: shared, hull: hull);
+  }
+
+  static int _edgeKey(int a, int b) =>
+      a < b ? a * 0x100000000 + b : b * 0x100000000 + a;
+
+  static void _countEdge(Map<int, int> counts, int a, int b) {
+    final key = _edgeKey(a, b);
+    counts[key] = (counts[key] ?? 0) + 1;
+  }
+
+  /// Adds the undirected edge once (first occurrence wins); a negative count
+  /// marks an edge that was already emitted.
+  static void _emitEdge(
+    Map<int, int> counts,
+    int a,
+    int b,
+    SurveyPoint pa,
+    SurveyPoint pb,
+    Offset origin,
+    Path shared,
+    Path hull,
+  ) {
+    final key = _edgeKey(a, b);
+    final count = counts[key] ?? 1;
+    if (count < 0) return;
+    counts[key] = -1;
+    (count > 1 ? shared : hull)
+      ..moveTo(pa.x - origin.dx, pa.y - origin.dy)
+      ..lineTo(pb.x - origin.dx, pb.y - origin.dy);
   }
 
   static ({Path minor, Path major, List<ContourLabelSpec> labels})
@@ -196,7 +253,7 @@ final class MapGeometry {
     Offset origin,
     List<SurveyPoint> survey,
   ) {
-    final clearance = ContourLabelAnchor.clearanceFor(survey);
+    final anchor = IndexedLabelAnchor(survey);
     final minor = Path();
     final major = Path();
     final labels = <ContourLabelSpec>[];
@@ -208,11 +265,7 @@ final class MapGeometry {
         path.lineTo(c.points[i].x - origin.dx, c.points[i].y - origin.dy);
       }
       if (c.isMajor && c.points.length >= 2) {
-        final mid = c.points[ContourLabelAnchor.indexFor(
-          c.points,
-          survey,
-          clearance,
-        )];
+        final mid = c.points[anchor.indexFor(c.points)];
         labels.add(
           ContourLabelSpec(
             Offset(mid.x - origin.dx, mid.y - origin.dy),

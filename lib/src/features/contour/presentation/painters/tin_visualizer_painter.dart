@@ -276,18 +276,25 @@ class TinVisualizerPainter extends CustomPainter {
     }
   }
 
+  // Reused across the (up to tens of thousands of) triangles of a frame: the
+  // canvas records paint and path by value on every draw call.
+  final Paint _fill = Paint();
+  final Paint _outline = Paint()
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 1;
+  final Path _poly = Path();
+
   void _paintTriangle(Canvas canvas, List<Offset> tri, double p) {
-    final poly = Path()
+    final poly = _poly
+      ..reset()
       ..moveTo(tri[0].dx, tri[0].dy)
       ..lineTo(tri[1].dx, tri[1].dy)
       ..lineTo(tri[2].dx, tri[2].dy)
       ..close();
-    canvas.drawPath(poly, Paint()..color = _purple.withValues(alpha: 0.08 * p));
-    final stroke = Paint()
-      ..color = _purple.withValues(alpha: 0.6 * p)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1;
-    canvas.drawPath(p >= 1 ? poly : _partialPerimeter(tri, p), stroke);
+    _fill.color = _purple.withValues(alpha: 0.08 * p);
+    canvas.drawPath(poly, _fill);
+    _outline.color = _purple.withValues(alpha: 0.6 * p);
+    canvas.drawPath(p >= 1 ? poly : _partialPerimeter(tri, p), _outline);
   }
 
   /// First [fraction] of the closed outline (anime `setDashoffset`).
