@@ -166,10 +166,10 @@ void main() {
     final data = TinVisualData(
       points: points,
       triangles: model.triangles,
-      breakLines: [
+      breakLines: const [
         BreakLine(
           name: 'B',
-          points: const [Point3(5, 5, 1), Point3(60, 40, 2), Point3(90, 90, 3)],
+          points: [Point3(5, 5, 1), Point3(60, 40, 2), Point3(90, 90, 3)],
         ),
       ],
       size: const Size(320, 280),

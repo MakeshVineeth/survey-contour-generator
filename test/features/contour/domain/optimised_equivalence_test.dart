@@ -5,6 +5,7 @@ import 'package:survey_contour_generator/src/features/contour/domain/entities/co
 import 'package:survey_contour_generator/src/features/contour/domain/entities/geometry.dart';
 import 'package:survey_contour_generator/src/features/contour/domain/entities/triangle.dart';
 import 'package:survey_contour_generator/src/features/contour/domain/services/contour_generator.dart';
+import 'package:survey_contour_generator/src/features/contour/domain/services/contour_model_builder.dart';
 import 'package:survey_contour_generator/src/features/contour/domain/services/delaunay.dart';
 
 import 'reference/reference_domain.dart';
@@ -80,6 +81,62 @@ void main() {
           );
         });
       }
+    }
+  });
+
+  group('mergeBreakLinePoints matches the linear-scan reference', () {
+    List<SurveyPoint> reference(List<SurveyPoint> points, List<BreakLine> bls) {
+      final merged = [...points];
+      for (final bl in bls) {
+        for (final pt in bl.points) {
+          final exists = merged.any(
+            (p) =>
+                (p.x - pt.x).abs() < 0.001 && (p.y - pt.y).abs() < 0.001,
+          );
+          if (!exists) {
+            merged.add(SurveyPoint(borehole: bl.name, x: pt.x, y: pt.y, z: pt.z));
+          }
+        }
+      }
+      return merged;
+    }
+
+    for (final seed in const [1, 2, 3, 4, 5, 6]) {
+      test('random points, duplicates at the tolerance edge, seed $seed', () {
+        final r = math.Random(seed);
+        final offset = [0.0, 512345.678, -4123456.789, 1e9, -1e9, 3e12][seed - 1];
+        final points = [
+          for (var i = 0; i < 400; i++)
+            _pt(i, offset + r.nextInt(40) * 0.5, offset - r.nextInt(40) * 0.5, 1),
+        ];
+        const deltas = [0.0, 0.0005, 0.000999, 0.001, 0.0010001, 0.002, -0.0009, -0.001];
+        final bls = [
+          for (var b = 0; b < 4; b++)
+            BreakLine(name: 'B$b', points: [
+              for (var i = 0; i < 300; i++)
+                Point3(
+                  points[r.nextInt(points.length)].x + deltas[r.nextInt(deltas.length)],
+                  points[r.nextInt(points.length)].y + deltas[r.nextInt(deltas.length)],
+                  r.nextDouble() * 9,
+                ),
+              if (seed == 4) ...[
+                const Point3(double.nan, 1, 1),
+                const Point3(double.infinity, 2, 1),
+                const Point3(3, double.negativeInfinity, 1),
+                const Point3(double.nan, 1, 1),
+              ],
+            ]),
+        ];
+        final actual = ContourModelBuilder.mergeBreakLinePoints(points, bls);
+        final expected = reference(points, bls);
+        expect(actual.length, expected.length);
+        for (var i = 0; i < actual.length; i++) {
+          expect(actual[i].borehole, expected[i].borehole);
+          expect(actual[i].x.compareTo(expected[i].x), 0);
+          expect(actual[i].y.compareTo(expected[i].y), 0);
+          expect(actual[i].z, expected[i].z);
+        }
+      });
     }
   });
 

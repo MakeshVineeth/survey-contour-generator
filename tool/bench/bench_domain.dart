@@ -42,7 +42,14 @@ void main(List<String> args) {
     final bl = [
       BreakLine(name: 'L1', points: [for (var i = 0; i < 50; i++) Point3(500000.0 + i * 3.3, 4000000.0 + i * 2.1, 100.0 + i)])
     ];
-    time('merge breaklines', () => ContourModelBuilder.mergeBreakLinePoints(pts, bl));
+    time('merge breaklines(50)', () => ContourModelBuilder.mergeBreakLinePoints(pts, bl));
+    final big = [
+      BreakLine(name: 'B', points: [
+        for (var i = 0; i < n ~/ 2; i++)
+          Point3(500000.0 + (i * 7.31) % 1000, 4000000.0 + (i * 3.17) % 1000, 100.0)
+      ])
+    ];
+    time('merge breaklines(n/2)', () => ContourModelBuilder.mergeBreakLinePoints(pts, big));
     var len = 0;
     time('dxf', () => len = DxfExporter.build(model.contours, bl, pts).length);
     stdout.writeln('    dxf chars=$len');

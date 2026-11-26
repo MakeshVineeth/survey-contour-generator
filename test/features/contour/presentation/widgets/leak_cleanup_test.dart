@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-import 'package:flutter/rendering.dart';
 import 'package:flutter/gestures.dart';
 import 'package:leak_tracker_flutter_testing/leak_tracker_flutter_testing.dart'; // ignore: depend_on_referenced_packages
 import 'package:flutter/services.dart';
@@ -76,14 +74,6 @@ void main() {
       final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
       await mouse.addPointer(location: const Offset(600, 300));
       await tester.pump();
-      for (final e in tester.elementList(find.byType(RepaintBoundary))) {
-        final ro = e.renderObject;
-        final ancestors = <String>[];
-        e.visitAncestorElements((a) {
-          if (ancestors.length < 3) ancestors.add(a.widget.runtimeType.toString());
-          return true;
-        });
-      }
       final before = sibling.paints;
       for (var i = 0; i < 10; i++) {
         await mouse.moveTo(Offset(500.0 + i * 20, 300));
