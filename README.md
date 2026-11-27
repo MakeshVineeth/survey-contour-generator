@@ -159,7 +159,7 @@ See also [CHANGELOG.md](CHANGELOG.md).
 
 ## Version
 
-**v13.0.0** — Flutter port of v12.4 (build date of the original single-file app: 2026-01-26)
+**v13.0.1** (build 2026-11-27) — Flutter port of v12.4 (build date of the original single-file app: 2026-01-26)
 
 ---
 

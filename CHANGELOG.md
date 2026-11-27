@@ -3,6 +3,18 @@
 All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versioning: [SemVer](https://semver.org/).
 
+## [13.0.1] - 2026-11-27
+
+### Fixed
+- Touch: in Add Point mode a tap adds a point, a drag pans and two fingers pinch-zoom; zoom and pan no longer reset when the toolbar re-wraps.
+- The orange draw-mode pill is a button that switches between Add Point and Pan/Zoom; tapping it or the legend no longer adds a point.
+- Dialog close (x) and chart expand buttons, and small list buttons on phones, have touch-sized hit areas.
+
+### Changed
+- Faster startup and lower memory: Delaunay, contour chaining and label placement are O(n log n)-class with output identical to before (verified by equivalence tests); ThemeData built once; Android baseline profile.
+- Web: the service worker installs after the app is on screen, which halves the cold-load time on slow links.
+- Export dialog paths (PNG, BMP, Print, Excel, cancelled and failed saves) are covered by tests.
+
 ## [13.0.0]
 
 ### Changed
