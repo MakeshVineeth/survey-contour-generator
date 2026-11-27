@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text.dart';
+import '../../../../core/widgets/app_modal.dart';
 import '../../domain/entities/geometry.dart';
 import '../../domain/entities/triangle.dart';
 import '../controllers/contour_controller.dart';
@@ -94,7 +95,7 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      padding: const EdgeInsets.fromLTRB(20, 6, 6, 6),
       decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: AppColors.border)),
       ),
@@ -111,25 +112,7 @@ class _Header extends StatelessWidget {
               ),
             ),
           ),
-          MouseRegion(
-            cursor: SystemMouseCursors.click,
-            child: Semantics(
-              button: true,
-              label: 'Close',
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: onClose,
-                child: Text(
-                  '×',
-                  style: AppText.ui(
-                    24,
-                    color: AppColors.textSecondary,
-                    height: 1,
-                  ),
-                ),
-              ),
-            ),
-          ),
+          ModalCloseButton(onClose: onClose),
         ],
       ),
     );

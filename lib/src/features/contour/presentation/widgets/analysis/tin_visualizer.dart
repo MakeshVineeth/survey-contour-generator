@@ -134,8 +134,8 @@ class _TinVisualizerState extends State<TinVisualizer>
           ),
           if (widget.onExpand != null)
             Positioned(
-              top: 8,
-              right: 8,
+              top: 0,
+              right: 0,
               child: ExpandButton(
                 tooltip: 'Expand TIN visualization',
                 onTap: widget.onExpand!,

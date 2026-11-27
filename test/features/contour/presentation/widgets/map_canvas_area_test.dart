@@ -146,7 +146,66 @@ void main() {
     await tester.pump(const Duration(seconds: 3)); // toast timer
   });
 
-  testWidgets('tapping the draw pill or the legend does not add a point', (
+  testWidgets('touch: a drag pans the map and adds no point in Add mode', (
+    tester,
+  ) async {
+    await pumpAt(tester, 400, 800);
+    await h.loadSample(tester);
+    await tester.pump();
+    h.draw.toggleDrawMode();
+    await tester.pump();
+    final c = tester.getCenter(find.byType(MapCanvasArea));
+    final cx = h.view.centerX;
+
+    await tester.dragFrom(c, const Offset(80, 0));
+    await tester.pump();
+    expect(h.view.centerX, lessThan(cx));
+    expect(h.draw.currentBreakline, isEmpty);
+
+    // A wobble under the slop still counts as a tap.
+    final g = await tester.startGesture(c);
+    await g.moveBy(const Offset(4, 3));
+    await g.up();
+    await tester.pump();
+    expect(h.draw.currentBreakline, hasLength(1));
+    await tester.pump(const Duration(seconds: 3)); // toast timer
+  });
+
+  testWidgets('touch: pinch zooms in Add mode without adding points', (
+    tester,
+  ) async {
+    await pumpAt(tester, 400, 800);
+    await h.loadSample(tester);
+    await tester.pump();
+    h.draw.toggleDrawMode();
+    await tester.pump();
+    final c = tester.getCenter(find.byType(MapCanvasArea));
+    final before = h.view.scale;
+    final a = await tester.startGesture(c - const Offset(40, 0));
+    final b = await tester.startGesture(c + const Offset(40, 0));
+    await b.moveBy(const Offset(10, 0));
+    await b.moveBy(const Offset(60, 0));
+    await tester.pump();
+    expect(h.view.scale, greaterThan(before));
+    await a.up();
+    await b.up();
+    await tester.pump();
+    expect(h.draw.currentBreakline, isEmpty);
+  });
+
+  testWidgets('a toolbar re-wrap while panning keeps the zoom', (tester) async {
+    await pumpAt(tester, 400, 800);
+    await h.loadSample(tester);
+    await tester.pump();
+    final c = tester.getCenter(find.byType(MapCanvasArea));
+    h.view.zoomAt(c, 2);
+    final zoomed = h.view.scale;
+    h.draw.toggleDrawMode(); // shows the mode buttons, so the toolbar grows
+    await tester.pump();
+    expect(h.view.scale, zoomed);
+  });
+
+  testWidgets('the draw pill toggles Add and Pan/Zoom; the legend is inert', (
     tester,
   ) async {
     await pumpAt(tester, 400, 800);
@@ -155,12 +214,19 @@ void main() {
     h.draw.toggleDrawMode();
     await tester.pump();
 
-    // The orange "Click to add points" pill is an indicator, not a button.
+    // The orange pill is a button: it flips the mode and adds no point.
     await tester.tap(find.text('✏️ Click to add points (0)'));
     await tester.pump();
     expect(h.draw.currentBreakline, isEmpty);
+    expect(h.draw.mobileDrawMode, MobileDrawMode.navigate);
+    await tester.tap(
+      find.text('🧭 Pan/Zoom mode - switch to Add Point to continue'),
+    );
+    await tester.pump();
+    expect(h.draw.mobileDrawMode, MobileDrawMode.add);
+    expect(h.draw.currentBreakline, isEmpty);
 
-    // Neither does the legend overlay.
+    // The legend overlay never adds a point.
     await tester.tap(find.text('Legend'));
     await tester.pump();
     expect(h.draw.currentBreakline, isEmpty);

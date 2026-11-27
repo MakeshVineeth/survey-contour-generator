@@ -68,14 +68,24 @@ class MapViewController extends ChangeNotifier {
   /// (the JS `resize` listener); the first size runs any deferred fit.
   void setViewport(Size size) {
     if (size == _viewport) return;
+    final previous = _viewport;
     final first = !hasViewport;
     _viewport = size;
     if (!hasViewport) return;
-    if (_pendingFit || (!first && hasData)) {
+    if (_pendingFit || (!first && hasData && _isWindowResize(previous, size))) {
       fitToData();
     } else {
       _notify();
     }
+  }
+
+  /// A change of width, or a large change of height (rotation, window resize),
+  /// is a real resize. A small height change is the toolbar above the map
+  /// re-wrapping (draw mode, mode buttons, a longer scale label); refitting for
+  /// that would reset the user's zoom and pan every time it happens.
+  static bool _isWindowResize(Size from, Size to) {
+    if ((to.width - from.width).abs() > 1) return true;
+    return (to.height - from.height).abs() > from.height * 0.25;
   }
 
   /// Centres the view on the data bounds with an 80 px margin.

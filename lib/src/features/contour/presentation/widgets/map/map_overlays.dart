@@ -62,17 +62,32 @@ class DrawModeIndicator extends StatelessWidget {
     final text = mode == MobileDrawMode.add
         ? '✏️ Click to add points ($count)'
         : '🧭 Pan/Zoom mode - switch to Add Point to continue';
-    return _Panel(
-      color: AppColors.accentOrange.withValues(alpha: 0.9),
-      borderColor: AppColors.accentOrange,
-      radius: 6,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      child: Text(
-        text,
-        style: VizStyle.sans(
-          12,
-          const Color(0xFFFFFFFF),
-          weight: FontWeight.w500,
+    // Tapping the pill flips between adding points and moving the map, so it
+    // is a real control rather than a label that looks pressable.
+    return Semantics(
+      button: true,
+      label: text,
+      excludeSemantics: true,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => context.read<DrawController>().setMobileDrawMode(
+          mode == MobileDrawMode.add
+              ? MobileDrawMode.navigate
+              : MobileDrawMode.add,
+        ),
+        child: _Panel(
+          color: AppColors.accentOrange.withValues(alpha: 0.9),
+          borderColor: AppColors.accentOrange,
+          radius: 6,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          child: Text(
+            text,
+            style: VizStyle.sans(
+              12,
+              const Color(0xFFFFFFFF),
+              weight: FontWeight.w500,
+            ),
+          ),
         ),
       ),
     );

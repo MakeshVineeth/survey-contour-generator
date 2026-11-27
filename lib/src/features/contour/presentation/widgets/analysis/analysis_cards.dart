@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/app_modal.dart';
 import '../../../domain/entities/terrain.dart';
 import '../../painters/viz_style.dart';
 
@@ -168,23 +169,35 @@ class _ExpandButtonState extends State<ExpandButton> {
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: widget.onTap,
-            child: AnimatedScale(
-              scale: _hover ? 1.1 : 1,
-              duration: const Duration(milliseconds: 200),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: _hover
-                      ? AppColors.accentCyan.withValues(alpha: 0.15)
-                      : const Color(0x00000000),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Opacity(
-                  opacity: _hover ? 1 : 0.7,
-                  child: Text(
-                    '↗',
-                    style: VizStyle.sans(18, AppColors.accentCyan),
+            // The visible chip stays small; the tappable area is 44 px square.
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                minWidth: kMinTapTarget,
+                minHeight: kMinTapTarget,
+              ),
+              child: Center(
+                child: AnimatedScale(
+                  scale: _hover ? 1.1 : 1,
+                  duration: const Duration(milliseconds: 200),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: _hover
+                          ? AppColors.accentCyan.withValues(alpha: 0.15)
+                          : const Color(0x00000000),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Opacity(
+                      opacity: _hover ? 1 : 0.7,
+                      child: Text(
+                        '↗',
+                        style: VizStyle.sans(18, AppColors.accentCyan),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -246,8 +259,8 @@ class ChartContainer extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: 8,
-            right: 8,
+            top: 0,
+            right: 0,
             child: ExpandButton(tooltip: expandTooltip, onTap: onExpand),
           ),
         ],

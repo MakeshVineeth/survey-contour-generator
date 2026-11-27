@@ -53,6 +53,9 @@ class _AppButtonState extends State<AppButton> {
   @override
   Widget build(BuildContext context) {
     final style = _ButtonStyle.of(widget.variant);
+    // Phone-width screens: the small in-list buttons (Edit, x) get a 40 px
+    // minimum so a thumb hits them; desktop keeps the compact look.
+    final compactTouch = widget.small && MediaQuery.sizeOf(context).width < 600;
     final lifted = _hover && _enabled && style.lifts;
     final padding =
         widget.padding ??
@@ -62,7 +65,10 @@ class _AppButtonState extends State<AppButton> {
     final box = AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       transform: Matrix4.translationValues(0, lifted ? -1 : 0, 0),
-      constraints: BoxConstraints(minWidth: widget.minWidth ?? 0),
+      constraints: BoxConstraints(
+        minWidth: widget.minWidth ?? (compactTouch ? 40 : 0),
+        minHeight: compactTouch ? 40 : 0,
+      ),
       padding: padding,
       decoration: style.decoration(hover: _hover && _enabled),
       child: DefaultTextStyle(

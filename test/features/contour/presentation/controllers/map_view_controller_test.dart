@@ -51,6 +51,30 @@ void main() {
     expect(view.scale, closeTo(360 / 200, 1e-9));
   });
 
+  test('a small height change (toolbar re-wrap) keeps zoom and pan', () {
+    contours.loadSample();
+    view.setViewport(const Size(400, 600));
+    view.zoomAt(const Offset(100, 100), 2);
+    view.beginPan();
+    view.panTo(const Offset(30, -20));
+    final scale = view.scale;
+    final cx = view.centerX;
+    final cy = view.centerY;
+    view.setViewport(const Size(400, 560)); // toolbar grew by 40 px
+    view.setViewport(const Size(400, 600));
+    expect(view.scale, scale);
+    expect(view.centerX, cx);
+    expect(view.centerY, cy);
+  });
+
+  test('a large height change (rotation) refits', () {
+    contours.loadSample();
+    view.setViewport(const Size(400, 800));
+    view.zoomAt(const Offset(100, 100), 2);
+    view.setViewport(const Size(400, 400));
+    expect(view.scale, closeTo(240 / 200, 1e-9)); // width-limited: 240 / 200
+  });
+
   test('zoom about a point keeps the world point under the cursor', () {
     contours.loadSample();
     view.setViewport(const Size(1000, 800));
