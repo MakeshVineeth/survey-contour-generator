@@ -146,6 +146,32 @@ void main() {
     await tester.pump(const Duration(seconds: 3)); // toast timer
   });
 
+  testWidgets('tapping the draw pill or the legend does not add a point', (
+    tester,
+  ) async {
+    await pumpAt(tester, 400, 800);
+    await h.loadSample(tester);
+    await tester.pump();
+    h.draw.toggleDrawMode();
+    await tester.pump();
+
+    // The orange "Click to add points" pill is an indicator, not a button.
+    await tester.tap(find.text('✏️ Click to add points (0)'));
+    await tester.pump();
+    expect(h.draw.currentBreakline, isEmpty);
+
+    // Neither does the legend overlay.
+    await tester.tap(find.text('Legend'));
+    await tester.pump();
+    expect(h.draw.currentBreakline, isEmpty);
+
+    // Tapping the map itself still adds a point.
+    await tester.tapAt(tester.getCenter(find.byType(MapCanvasArea)));
+    await tester.pump();
+    expect(h.draw.currentBreakline, hasLength(1));
+    await tester.pump(const Duration(seconds: 3)); // toast timer
+  });
+
   testWidgets('mode buttons switch between add and navigate', (tester) async {
     await pumpAt(tester, 1200, 800);
     await h.loadSample(tester);
