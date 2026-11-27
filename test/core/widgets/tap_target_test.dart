@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:survey_contour_generator/src/core/widgets/app_button.dart';
 import 'package:survey_contour_generator/src/core/widgets/app_modal.dart';
 import 'package:survey_contour_generator/src/features/contour/presentation/widgets/analysis/analysis_cards.dart';
 
@@ -37,5 +38,27 @@ void main() {
     expect(box.height, greaterThanOrEqualTo(kMinTapTarget));
     await tester.tapAt(box.center + const Offset(-17, 17));
     expect(taps, 1);
+  });
+
+  testWidgets('small buttons are 40 px on phone widths, compact on desktop', (
+    tester,
+  ) async {
+    addTearDown(tester.view.reset);
+    tester.view.devicePixelRatio = 1;
+
+    tester.view.physicalSize = const Size(400, 800);
+    await tester.pumpWidget(
+      _host(AppButton(small: true, onPressed: () {}, child: const Text('×'))),
+    );
+    final phone = tester.getSize(find.byType(AppButton));
+    expect(phone.height, greaterThanOrEqualTo(40));
+    expect(phone.width, greaterThanOrEqualTo(40));
+
+    tester.view.physicalSize = const Size(1280, 800);
+    await tester.pumpWidget(
+      _host(AppButton(small: true, onPressed: () {}, child: const Text('×'))),
+    );
+    await tester.pump(const Duration(milliseconds: 400)); // constraints animate
+    expect(tester.getSize(find.byType(AppButton)).height, lessThan(40));
   });
 }
