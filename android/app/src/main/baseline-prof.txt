@@ -1,0 +1,33 @@
+# Hand-written baseline profile: classes/methods executed on the cold-start
+# path (process start -> Flutter engine init -> first frame). Wildcards are
+# resolved against the R8-obfuscated dex by AGP/R8 at build time.
+# App entry points
+HSPLcom/makeshtech/survey_contour_generator/**;->**(**)**
+Lcom/makeshtech/survey_contour_generator/**;
+# Flutter embedding: engine bootstrap, activity/view/delegate, platform channels
+HSPLio/flutter/embedding/**;->**(**)**
+Lio/flutter/embedding/**;
+HSPLio/flutter/view/**;->**(**)**
+Lio/flutter/view/**;
+HSPLio/flutter/util/**;->**(**)**
+Lio/flutter/util/**;
+HSPLio/flutter/plugin/**;->**(**)**
+Lio/flutter/plugin/**;
+HSPLio/flutter/app/**;->**(**)**
+Lio/flutter/app/**;
+# Plugin registrant and the plugins registered at startup
+HSPLio/flutter/plugins/**;->**(**)**
+Lio/flutter/plugins/**;
+# AndroidX pieces touched while creating the activity / window insets
+HSPLandroidx/core/view/WindowCompat**;->**(**)**
+Landroidx/core/view/WindowCompat**;
+HSPLandroidx/core/app/ComponentActivity;->**(**)**
+HSPLandroidx/lifecycle/**;->**(**)**
+Landroidx/lifecycle/**;
+HSPLandroidx/window/**;->**(**)**
+Landroidx/window/**;
+# Plugin classes instantiated/attached by the registrant at engine start
+HSPLcom/mr/flutter/plugin/filepicker/FilePickerPlugin**;->**(**)**
+Lcom/mr/flutter/plugin/filepicker/FilePickerPlugin**;
+HSPLnet/nfet/flutter/printing/PrintingPlugin**;->**(**)**
+Lnet/nfet/flutter/printing/PrintingPlugin**;

@@ -135,6 +135,18 @@ final class ElevationChartLayout {
     return w;
   }
 
+  /// Screen position of every sample (computed once per layout).
+  late final List<Offset> points = [
+    for (var i = 0; i < samples.length; i++) pointAt(i),
+  ];
+
+  /// The spline through [points] (computed once per layout; callers must not
+  /// mutate it).
+  late final Path curve = ChartMath.spline(points);
+
+  /// Highest plot position of the curve (smallest y).
+  late final double curveTop = points.map((p) => p.dy).reduce(math.min);
+
   double xAt(int i) {
     final last = samples.length - 1;
     if (last <= 0) return plot.left + plot.width / 2;
@@ -162,11 +174,16 @@ class ElevationChartPainter extends CustomPainter {
     required this.samples,
     required this.style,
     this.hoverIndex,
+    this.layout,
   });
 
   final List<ElevationSample> samples;
   final ElevationChartStyle style;
   final int? hoverIndex;
+
+  /// Optional precomputed layout for the same samples/style (reused while the
+  /// pointer moves; ignored when its size differs from the paint size).
+  final ElevationChartLayout? layout;
 
   static const Color _line = AppColors.accentCyan;
   static const Color _axisLine = Color(0xFFCCD6EB);
@@ -174,19 +191,25 @@ class ElevationChartPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (samples.isEmpty || size.isEmpty) return;
-    final layout = ElevationChartLayout(size, samples, style);
-    _paintGrid(canvas, layout);
-    if (!style.expanded) _paintBand(canvas, layout);
+    final given = layout;
+    final l = given != null &&
+            given.size == size &&
+            identical(given.samples, samples) &&
+            given.style == style
+        ? given
+        : ElevationChartLayout(size, samples, style);
+    _paintGrid(canvas, l);
+    if (!style.expanded) _paintBand(canvas, l);
     canvas
       ..save()
-      ..clipRect(layout.plot.inflate(1));
-    _paintArea(canvas, layout);
+      ..clipRect(l.plot.inflate(1));
+    _paintArea(canvas, l);
     canvas.restore();
-    _paintAxes(canvas, layout);
-    if (style.expanded) _paintMeanLine(canvas, layout);
-    _paintMarkers(canvas, layout);
+    _paintAxes(canvas, l);
+    if (style.expanded) _paintMeanLine(canvas, l);
+    _paintMarkers(canvas, l);
     if (style.title) _paintTitles(canvas, size);
-    _paintHover(canvas, layout, size);
+    _paintHover(canvas, l, size);
   }
 
   Paint _stroke(Color c, double w) => Paint()
@@ -225,13 +248,13 @@ class ElevationChartPainter extends CustomPainter {
   }
 
   void _paintArea(Canvas canvas, ElevationChartLayout l) {
-    final pts = [for (var i = 0; i < samples.length; i++) l.pointAt(i)];
-    final curve = ChartMath.spline(pts);
+    final pts = l.points;
+    final curve = l.curve;
     final fill = Path.from(curve)
       ..lineTo(pts.last.dx, l.plot.bottom)
       ..lineTo(pts.first.dx, l.plot.bottom)
       ..close();
-    final top = pts.map((p) => p.dy).reduce(math.min);
+    final top = l.curveTop;
     final shader = ui.Gradient.linear(
       Offset(0, top),
       Offset(0, l.plot.bottom),
