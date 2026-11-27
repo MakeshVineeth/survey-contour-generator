@@ -21,6 +21,10 @@ PUSH=1
 flutter build web --release --wasm --no-web-resources-cdn --web-content-hash \
   --base-href "$BASE_HREF"
 
+# Drop files the app never requests: the engine's *.symbols debug name maps (~12 MB) and
+# source maps. None of them is in precache_manifest.json, so the offline cache is unaffected.
+find build/web \( -name '*.symbols' -o -name '*.map' \) -type f -delete
+
 # Work inside build/ (git-ignored): a plain relative path behaves the same for git
 # and for the shell on every OS, unlike mktemp paths under Git Bash on Windows.
 WORK="build/pages-deploy"
