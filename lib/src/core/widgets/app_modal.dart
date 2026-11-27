@@ -85,6 +85,43 @@ class AppModal extends StatelessWidget {
   }
 }
 
+/// Minimum touch target (Material / WCAG 2.5.5 guidance is 44-48 logical px).
+const double kMinTapTarget = 44;
+
+/// The "×" of a dialog header. Looks like the bare glyph, but the tappable area
+/// is a full [kMinTapTarget] square so a thumb reliably hits it.
+class ModalCloseButton extends StatelessWidget {
+  const ModalCloseButton({required this.onClose, super.key});
+
+  final VoidCallback onClose;
+
+  @override
+  Widget build(BuildContext context) => MouseRegion(
+    cursor: SystemMouseCursors.click,
+    child: Semantics(
+      button: true,
+      label: 'Close',
+      excludeSemantics: true,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onClose,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            minWidth: kMinTapTarget,
+            minHeight: kMinTapTarget,
+          ),
+          child: Center(
+            child: Text(
+              '×',
+              style: AppText.ui(24, color: AppColors.textSecondary, height: 1),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
 class _ModalHeader extends StatelessWidget {
   const _ModalHeader({required this.title, required this.onClose});
 
@@ -93,7 +130,8 @@ class _ModalHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+    // 6 px vertical + the 44 px close target keeps the original 56 px header.
+    padding: const EdgeInsets.fromLTRB(20, 6, 6, 6),
     decoration: const BoxDecoration(
       border: Border(bottom: BorderSide(color: AppColors.border)),
     ),
@@ -103,25 +141,7 @@ class _ModalHeader extends StatelessWidget {
         Flexible(
           child: Text(title, style: AppText.ui(16, weight: FontWeight.w600)),
         ),
-        MouseRegion(
-          cursor: SystemMouseCursors.click,
-          child: Semantics(
-            button: true,
-            label: 'Close',
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: onClose,
-              child: Text(
-                '×',
-                style: AppText.ui(
-                  24,
-                  color: AppColors.textSecondary,
-                  height: 1,
-                ),
-              ),
-            ),
-          ),
-        ),
+        ModalCloseButton(onClose: onClose),
       ],
     ),
   );

@@ -154,21 +154,128 @@ void main() {
       expect(h.files.saved, isEmpty);
     });
 
-    testWidgets('image export failure shows a toast and keeps the dialog', (
+    // Real rendering (dart:ui toImage) completes outside the fake-async zone.
+    Future<void> waitUntil(WidgetTester tester, bool Function() done) async {
+      for (var i = 0; i < 600 && !done(); i++) {
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 100)),
+        );
+        await tester.pump();
+      }
+      expect(done(), isTrue, reason: 'export did not finish in time');
+    }
+
+    Future<void> openExport(WidgetTester tester, AppHarness h) async {
+      await h.pump(tester, size: desktop);
+      await h.loadSample(tester);
+      await tester.tap(find.text('Export'));
+      await tester.pumpAndSettle();
+    }
+
+    const pngSignature = [137, 80, 78, 71, 13, 10, 26, 10];
+
+    testWidgets('PNG export saves a real PNG and closes the dialog', (
+      tester,
+    ) async {
+      final h = AppHarness();
+      await openExport(tester, h);
+      await tester.tap(find.text('PNG Image'));
+      await waitUntil(tester, () => h.files.saved.isNotEmpty);
+      await tester.pumpAndSettle();
+
+      final f = h.files.saved.single;
+      expect(f.fileName, endsWith('.png'));
+      expect(f.mimeType, 'image/png');
+      expect(f.bytes.sublist(0, 8), pngSignature);
+      expect(find.text('Export Options'), findsNothing);
+      expect(find.text('✓ PNG image exported (3000x3000)'), findsOneWidget);
+    });
+
+    testWidgets('BMP export saves a real BMP and closes the dialog', (
+      tester,
+    ) async {
+      final h = AppHarness();
+      await openExport(tester, h);
+      await tester.tap(find.text('BMP Bitmap'));
+      await waitUntil(tester, () => h.files.saved.isNotEmpty);
+      await tester.pumpAndSettle();
+
+      final f = h.files.saved.single;
+      expect(f.fileName, endsWith('.bmp'));
+      expect(f.mimeType, 'image/bmp');
+      expect(String.fromCharCodes(f.bytes.sublist(0, 2)), 'BM');
+      expect(find.text('Export Options'), findsNothing);
+      expect(find.text('✓ BMP image exported (3000x3000)'), findsOneWidget);
+    }, timeout: const Timeout(Duration(minutes: 3)));
+
+    testWidgets('Print sends a PNG to the print service and closes', (
+      tester,
+    ) async {
+      final h = AppHarness();
+      await openExport(tester, h);
+      await tester.ensureVisible(find.text('Print'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Print'));
+      await waitUntil(tester, () => h.printer.printed.isNotEmpty);
+      await tester.pumpAndSettle();
+
+      expect(h.printer.printed.single.sublist(0, 8), pngSignature);
+      expect(h.files.saved, isEmpty);
+      expect(find.text('Export Options'), findsNothing);
+      expect(find.text('✓ Print dialog opened'), findsOneWidget);
+    });
+
+    testWidgets('Excel export with breaklines saves an xlsx, stays open', (
       tester,
     ) async {
       final h = AppHarness();
       await h.pump(tester, size: desktop);
       await h.loadSample(tester);
-
+      h.contours.addBreakLine(_line);
+      await tester.pump(const Duration(milliseconds: 50));
       await tester.tap(find.text('Export'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('PNG Image'));
+      await tester.ensureVisible(find.text('Breaklines to Excel'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Breaklines to Excel'));
       await tester.pump();
-      await tester.pump();
-      // Either the canvas agent's exporter ran (dialog closes) or the stub
-      // threw and the failure toast is shown; both must leave a usable UI.
-      expect(tester.takeException(), isNull);
+
+      final f = h.files.saved.single;
+      expect(f.fileName, startsWith('breaklines-'));
+      expect(f.fileName, endsWith('.xlsx'));
+      expect(f.bytes.sublist(0, 2), [0x50, 0x4B]); // zip container "PK"
+      expect(find.text('Export Options'), findsOneWidget);
+      expect(find.text('✓ Excel exported'), findsOneWidget);
+    });
+
+    testWidgets('a cancelled save keeps the dialog open without a toast', (
+      tester,
+    ) async {
+      final h = AppHarness();
+      await h.pump(tester, size: desktop);
+      await h.loadSample(tester);
+      h.files.saveResult = false;
+      await tester.tap(find.text('Export'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('DXF R12'));
+      await tester.pumpAndSettle();
+      expect(find.text('Export Options'), findsOneWidget);
+      expect(find.textContaining('exported'), findsNothing);
+    });
+
+    testWidgets('a failing save shows the failure toast, keeps the dialog', (
+      tester,
+    ) async {
+      final h = AppHarness();
+      await h.pump(tester, size: desktop);
+      await h.loadSample(tester);
+      h.files.saveError = StateError('disk full');
+      await tester.tap(find.text('Export'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('AutoLISP Script'));
+      await tester.pumpAndSettle();
+      expect(find.text('Export Options'), findsOneWidget);
+      expect(find.textContaining('✕ Export failed'), findsOneWidget);
     });
   });
 
