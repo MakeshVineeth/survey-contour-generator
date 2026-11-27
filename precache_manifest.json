@@ -135,8 +135,8 @@
     },
     {
       "url": "boot.js",
-      "hash": "e8fd555b",
-      "size": 3089,
+      "hash": "437de8cc",
+      "size": 3999,
       "urlHashed": false
     },
     {
@@ -237,7 +237,7 @@
     },
     {
       "url": "flutter_bootstrap.js",
-      "hash": "2c664aa0",
+      "hash": "a9c2c7f0",
       "size": 14078,
       "urlHashed": false
     },
@@ -272,21 +272,21 @@
       "urlHashed": false
     },
     {
-      "url": "main.dart.44549f28.js",
-      "hash": "44549f28",
-      "size": 3433335,
+      "url": "main.dart.4363620a.wasm",
+      "hash": "4363620a",
+      "size": 2854880,
       "urlHashed": true
     },
     {
-      "url": "main.dart.55a3be22.wasm",
-      "hash": "55a3be22",
-      "size": 2841531,
+      "url": "main.dart.c45f2b26.mjs",
+      "hash": "c45f2b26",
+      "size": 32339,
       "urlHashed": true
     },
     {
-      "url": "main.dart.a04d4703.mjs",
-      "hash": "a04d4703",
-      "size": 32305,
+      "url": "main.dart.ca33ecdf.js",
+      "hash": "ca33ecdf",
+      "size": 3441639,
       "urlHashed": true
     },
     {
@@ -297,19 +297,19 @@
     },
     {
       "url": "privacy.html",
-      "hash": "52b17ef3",
-      "size": 3816,
+      "hash": "62206ba8",
+      "size": 3756,
       "urlHashed": false
     },
     {
       "url": "sw.js",
-      "hash": "68708bfb",
-      "size": 7831,
+      "hash": "7705e5aa",
+      "size": 10126,
       "urlHashed": false
     },
     {
       "url": "version.json",
-      "hash": "7517c5b0",
+      "hash": "3e89af5a",
       "size": 122,
       "urlHashed": false
     }

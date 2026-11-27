@@ -1,7 +1,12 @@
 'use strict';
 // Offline service worker for Survey Contour Generator.
-//  * install:  precaches every entry of precache_manifest.json (flutter build web --web-content-hash)
+//  * install:  precaches the entries of precache_manifest.json (flutter build web --web-content-hash)
 //              except canvaskit/**, into a cache named after the manifest content (one cache per build).
+//              Only the app bundle this browser actually runs is precached: boot.js registers
+//              `sw.js?v=<hash>&b=wasm|js`, and the other (unused) main.dart.* variant is skipped.
+//              Content-hashed files are fetched through the HTTP cache (the page has just loaded them,
+//              so this costs no extra download) or copied from the previous build's cache when their
+//              hash is unchanged (fonts, NOTICES), so an update only downloads what really changed.
 //              A failed install deletes its partial cache, so the previous build keeps working.
 //  * fetch:    content-hashed files (manifest `urlHashed`) and canvaskit/** -> cache-first;
 //              every other file (stable URL across deploys) -> network-first with cache fallback.
@@ -16,6 +21,9 @@ const NETWORK_FIRST = new Set([
   '', 'index.html', 'flutter_bootstrap.js', 'flutter.js', 'manifest.json', 'version.json', 'sw.js', MANIFEST,
 ]);
 const MATCH = { ignoreSearch: true };
+const BUILD = new URL(self.location.href).searchParams.get('b'); // 'wasm' | 'js' | null (= both)
+const JS_ENTRY = /^main\.dart\.[0-9a-f]+\.js$/;
+const WASM_ENTRY = /^main\.dart\.[0-9a-f]+\.(wasm|mjs)$/;
 
 const scopePath = new URL(self.registration.scope).pathname;
 const relPath = (url) => {
@@ -37,6 +45,14 @@ async function liveCacheName() {
   return keys.length ? keys[keys.length - 1] : null;
 }
 
+// Whether [url] belongs in the install-time precache for this browser's build.
+function precached(url) {
+  if (url.startsWith('canvaskit/')) return false;
+  if (BUILD === 'wasm' && JS_ENTRY.test(url)) return false;
+  if (BUILD === 'js' && WASM_ENTRY.test(url)) return false;
+  return true;
+}
+
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
     const res = await fetch(MANIFEST, { cache: 'no-store' });
@@ -46,12 +62,17 @@ self.addEventListener('install', (event) => {
     const cacheName = PREFIX + hashString(text);
     await caches.delete(cacheName);
     const cache = await caches.open(cacheName);
-    const urls = entries.map((e) => e.url).filter((u) => !u.startsWith('canvaskit/'));
+    const urls = entries.filter((e) => precached(e.url)).map((e) => e.url);
     for (const extra of ['sw.js', MANIFEST]) if (!urls.includes(extra)) urls.push(extra);
     try {
-      // 'reload' bypasses the HTTP cache so the stored copies match this build.
+      const reusable = await previousCopies(cacheName, entries);
       await Promise.all(urls.map(async (u) => {
-        const r = await fetch(new Request(u, { cache: 'reload' }));
+        const old = reusable.get(u);
+        if (old) return cache.put(u, old);
+        const hashed = entries.some((e) => e.url === u && e.urlHashed === true);
+        // A content-hashed URL always has the same bytes, so the HTTP cache may answer it;
+        // every other file is revalidated so the stored copy matches this build.
+        const r = await fetch(new Request(u, { cache: hashed ? 'default' : 'reload' }));
         if (!r.ok) throw new Error('precache failed: ' + u);
         await cache.put(u, r);
       }));
@@ -66,6 +87,28 @@ self.addEventListener('install', (event) => {
     await self.skipWaiting();
   })());
 });
+
+// Responses of earlier builds that are still valid: content-hashed files whose manifest
+// hash is unchanged (url -> Response). Reading them avoids downloading them again.
+async function previousCopies(cacheName, entries) {
+  const wanted = new Map();
+  for (const e of entries) if (e.urlHashed === true) wanted.set(e.url, e.hash);
+  const found = new Map();
+  for (const key of await caches.keys()) {
+    if (!key.startsWith(PREFIX) || key === cacheName) continue;
+    const old = await caches.open(key);
+    const oldManifest = await old.match(MANIFEST);
+    if (!oldManifest) continue;
+    const oldHashes = new Map();
+    for (const e of JSON.parse(await oldManifest.text()).entries || []) oldHashes.set(e.url, e.hash);
+    for (const [url, hash] of wanted) {
+      if (found.has(url) || oldHashes.get(url) !== hash) continue;
+      const res = await old.match(url);
+      if (res) found.set(url, res);
+    }
+  }
+  return found;
+}
 
 // The engine files (canvaskit/**) are cached lazily, so after an update they only
 // exist in the previous build's cache, which activation deletes. Copy every
@@ -178,9 +221,9 @@ async function cacheFirst(req, rel) {
   const hit = await caches.match(rel, MATCH);
   if (hit) return hit;
   const res = await fetch(req);
-  // Only engine files are cached at runtime; everything else was precached, so an
-  // unknown path (e.g. an SPA-fallback HTML answer) can never poison the cache.
-  const cacheable = rel.startsWith('canvaskit/') && res.type === 'basic';
-  if (cacheable && res.ok && res.status === 200 && !req.headers.has('range')) await store(rel, res.clone());
+  // Engine files and content-hashed files (e.g. the JS bundle when this browser later
+  // falls back from Wasm) are immutable per URL, so they are cached when first used.
+  // An unknown path (e.g. an SPA-fallback HTML answer) can never poison the cache.
+  if (res.type === 'basic' && res.ok && res.status === 200 && !req.headers.has('range')) await store(rel, res.clone());
   return res;
 }
