@@ -117,7 +117,7 @@ Requirements Google checks, all met by the current build:
 | Target API level (new apps must target Android 16 / API 36 from 31 Aug 2026, [Google](https://support.google.com/googleplay/android-developer/answer/11926878)) | targets 37 (also meets the Aug 2027 API 37 requirement early) |
 | 64-bit native code | arm64-v8a and x86_64 included |
 | 16 KB page-size support (native libraries must be 16 KB aligned for Android 15+ targets) | verified: all `.so` LOAD segments aligned to 16 KB or 64 KB |
-| Increasing `versionCode` for every upload | `pubspec.yaml`: `13.0.0+1300`; bump the `+` number each release |
+| Increasing `versionCode` for every upload | `pubspec.yaml`: `13.0.1+1304`; bump the `+` number each release |
 
 Build:
 

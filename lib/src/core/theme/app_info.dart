@@ -3,6 +3,6 @@
 /// Keep [version] in sync with `version:` in pubspec.yaml (a test enforces it).
 abstract final class AppInfo {
   static const String name = 'Survey Contour Generator';
-  static const String version = '13.0.0';
-  static const String buildDate = '2026-11-21';
+  static const String version = '13.0.1';
+  static const String buildDate = '2026-11-27';
 }
